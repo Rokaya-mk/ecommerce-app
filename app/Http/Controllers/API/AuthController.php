@@ -95,6 +95,6 @@ class AuthController extends BaseController
         $user->name = $request->name;
         $user->shippingAddress = $request->shippingAddress;
         $user->save();
-        return $this->SendResponse('Information Updated Successfully', Auth::id());
+        return $this->SendResponse('Information Updated Successfully', 200);
     }
 }
