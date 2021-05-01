@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Http\Controllers\API;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +19,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('login', 'API\AuthController@login');
+Route::post('register', 'API\AuthController@register');
+
+Route::post('ownerlogin', 'API\AuthController@OwnerLogin');
+Route::post('ownerregister', 'API\AuthController@OwnerRegister');
+
+Route::put('changeInformation/{id}', 'API\AuthController@updateUserInformation')->middleware('auth:api');
