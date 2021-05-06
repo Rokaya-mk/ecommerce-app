@@ -23,7 +23,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('login', 'API\AuthController@login');
 Route::post('register', 'API\AuthController@register');
 
-Route::post('ownerlogin', 'API\AuthController@OwnerLogin');
-Route::post('ownerregister', 'API\AuthController@OwnerRegister');
-
-Route::put('changeInformation/{id}', 'API\AuthController@updateUserInformation')->middleware('auth:api');
+Route::post('forgot', 'API\AuthController@Forgot');
+Route::post('reset', 'API\AuthController@PasswordReset');
+Route::post('logout', 'API\AuthController@logout')->middleware('auth:api');
+Route::put('update', 'API\AuthController@updateUserInformation')->middleware('auth:api');
+Route::post('verify', 'API\AuthController@Emailverify')->middleware('auth:api');
