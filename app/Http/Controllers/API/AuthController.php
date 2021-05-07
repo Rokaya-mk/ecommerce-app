@@ -53,7 +53,10 @@ class AuthController extends BaseController
 
     public function login(Request $request){
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
-            $user = Auth::user();
+		$user = Auth::user();
+		if($user->is_verify != 1){
+			return $this->SendError('Verify your email', 400);
+		}
             $success['name'] = $user->name;
 	    $success['is_Admin'] = $user->is_Admin;
             $success['token'] = $user->createToken('customer')->accessToken;
