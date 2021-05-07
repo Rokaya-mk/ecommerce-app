@@ -69,7 +69,7 @@ class AuthController extends BaseController
             'name' => 'required',
             'shippingAddress' => 'required',
         ]);
-	
+
 	$user->name = $request->name;
         $user->shippingAddress = $request->shippingAddress;
         $user->save();
@@ -131,7 +131,6 @@ class AuthController extends BaseController
         }
         $user->password = Hash::make($request['password']);
         $user->save();
-<<<<<<< HEAD
         return $this->SendResponse('User password changed successfully', 200);
     }
     public function Emailverify(Request $request){
@@ -146,8 +145,5 @@ class AuthController extends BaseController
 		    return $this->SendResponse('Email verified', 200);
 	    }
 	    return $this->SendError('Token wrong', 404);
-=======
-        return $this->SendResponse('Information Updated Successfully', 200);
->>>>>>> 9c827f8850a5d220f5fce4e3a0419d474b0febcb
     }
 }
