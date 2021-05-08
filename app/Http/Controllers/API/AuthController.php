@@ -90,7 +90,7 @@ class AuthController extends BaseController
     }
 
     //forgot password
-    public function Forgot(Request $request){
+    public function forgot(Request $request){
         $email = $request['email'];
         $validate = Validator::make($request->all(),[
             'email' => 'required | email',
@@ -118,7 +118,7 @@ class AuthController extends BaseController
             return $this->SendError($exception->getMessage(), 400);
         }
     }
-    public function PasswordReset(Request $request){
+    public function passwordReset(Request $request){
         $validate = Validator::make($request->all(),[
             'token' => 'required',
             'password' => 'required',
@@ -136,17 +136,20 @@ class AuthController extends BaseController
         $user->save();
         return $this->SendResponse('User password changed successfully', 200);
     }
-    public function Emailverify(Request $request){
-	    $user = Auth::user();
+
+    public function emailVerify(Request $request){
 	    $validate = Validator::make($request->all(), [
+		    'email' => 'required | email',
 		    'token' => 'required',
 	    ]);
+	    $user = User::where('email', $request['email'])->first();
 	    $token = $request['token'];
 	    if($user->is_verify == $token){
 		    $user->is_verify = 1;
+		    $user->markEmailAsVerified();
 		    $user->save();
-		    return $this->SendResponse('Email verified', 200);
+		    return $this->SendResponse('Email verified successfully', 200);
 	    }
-	    return $this->SendError('Token wrong', 404);
+	    return $this->SendError('Wrong token', 404);
     }
 }
