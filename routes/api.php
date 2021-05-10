@@ -29,10 +29,6 @@ Route::post('logout', 'API\AuthController@logout')->middleware('auth:api');
 Route::put('update', 'API\AuthController@updateUserInformation')->middleware('auth:api');
 Route::post('verify', 'API\AuthController@emailVerify');
 
-
-
-
-
 Route::post('products', 'API\ProductController@index');
 Route::post('product/{id}', 'API\ProductController@show');
 Route::post('addProduct', 'API\ProductController@store')->middleware('auth:api');
@@ -43,3 +39,7 @@ Route::post('searchForProduct', 'API\ProductController@searchForProduct');
 Route::post('addImage', 'API\ProductImageController@addImage')->middleware('auth:api');
 Route::post('getProductImagesUrls/{id}', 'API\ProductImageController@getProductImagesUrls')->middleware('auth:api');
 Route::post('deleteImage', 'API\ProductImageController@deleteImage')->middleware('auth:api');
+
+Route::post('addSize', 'API\ProductSizeController@addSize')->middleware('auth:api');
+Route::post('getProductSizes/{id}', 'API\ProductSizeController@getProductSizes')->middleware('auth:api');
+Route::post('deleteSize', 'API\ProductSizeController@deleteSize')->middleware('auth:api');
