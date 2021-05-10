@@ -20,4 +20,9 @@ class Product extends Model
     {
     	return $this->hasMany('App\Models\Product_image');
     }
+
+    public function Product_size()
+    {
+    	return $this->hasMany('App\Models\Product_size');
+    }
 }
