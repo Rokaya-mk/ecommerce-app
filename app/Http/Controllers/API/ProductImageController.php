@@ -27,6 +27,10 @@ class ProductImageController extends BaseController
             $user=User::find($userId);
             if($user->is_Admin == 1)
             {
+                $product=Product::find($request->product_id);
+                if(is_null($product))
+                    return $this->SendError('Product is not found');
+
                 $newImageName=time() . '-' . $request->image->getClientOriginalName();
                 $imageId = DB::table('product_images')->where('product_id',$request->product_id)->max('id');
 
@@ -76,6 +80,9 @@ class ProductImageController extends BaseController
             $user=User::find($userId);
             if($user->is_Admin == 1)
             {
+                $product=Product::find($request->product_id);
+                if(is_null($product))
+                    return $this->SendError('Product is not found');
                 $deletedRows=Product_image::where('product_id',$request->product_id)->where('id',$request->image_id)->delete();
                 if($deletedRows==0)
                     return $this->SendError('image is not found');
