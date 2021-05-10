@@ -8,22 +8,22 @@ use Illuminate\Http\Request;
 class BaseController extends Controller
 {
     public function SendResponse($result, $message){
-        $respones = [
+        $response = [
             'success' => true,
             'data' => $result,
             'message' => $message,
         ];
-        return response()->json($respones, 200);
+        return response()->json($response, 200);
     }
 
     public function SendError($error, $errorMessage = [], $code = 404){
-        $respones = [
+        $response = [
             'success' => false,
             'message' => $error,
         ];
         if (!empty($errorMessage)){
-            $responses['data']=$errorMessage;
+            $response['data']=$errorMessage;
         }
-        return response()->json($respones, $code);
+        return response()->json($response, $code);
     }
 }
