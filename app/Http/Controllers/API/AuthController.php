@@ -22,6 +22,7 @@ class AuthController extends BaseController
             'password' => 'required',
             'c_password' => 'required | same:password',
             'shippingAddress' => 'required',
+            'photo' => 'nullable|mimes:jpg,jpeg,png|max:5048|image'
         ]);
 
         if($validator->fails()){
@@ -31,6 +32,14 @@ class AuthController extends BaseController
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
         $user = User::create($input);
+        if ($request->has('photo')) {
+            $newImageName = time() . '_' . $request->photo->getClientOriginalName();
+            $request->photo->move('uploads/ProfilePics', $newImageName);
+            $imgaeURL = url('/uploads/ProfilePics'.'/'.$newImageName);
+            DB::table('users')->where('email', $request['email'])->update([
+                'photo' => $imgaeURL,
+            ]);
+        }
 	    //send the verify code
 	    $token = Str::random(5);
 	    try{
@@ -45,9 +54,11 @@ class AuthController extends BaseController
 	    }catch(\Exception $exception){
 		    return $this->SendError($exception->getMessage(), 400);
 	    }
-	    $success['name'] = $user->name;
-	    $success['is_Admin'] = $user->is_Admin;
-        $success['token'] = $user->createToken('customer')->accessToken;
+        $userData = User::where('email', $request['email'])->first();
+	    $success['name'] = $userData->name;
+	    $success['is_Admin'] = $userData->is_Admin;
+        $success['photo'] = $userData->photo;
+        $success['token'] = $userData->createToken('customer')->accessToken;
         return $this->SendResponse($success, 'Registered successfully');
     }
 
@@ -74,6 +85,7 @@ class AuthController extends BaseController
 		    }
             $success['name'] = $user->name;
 	        $success['is_Admin'] = $user->is_Admin;
+            $success['photo'] = $user->photo;
             $success['token'] = $user->createToken('customer')->accessToken;
             return $this->SendResponse($success, 'Customer logged in successfully');
         }else{
@@ -90,7 +102,12 @@ class AuthController extends BaseController
         if($validator->fails()){
             return $this->SendError('Validate Error', $validator->errors());
         }
-
+        if ($request->has('photo')) {
+            $newImageName = time() . '_' . $request->photo->getClientOriginalName();
+            $request->photo->move('uploads/ProfilePics', $newImageName);
+            $imgaeURL = url('/uploads/ProfilePics'.'/'.$newImageName);
+            $user->photo = $imgaeURL;
+        }
 	    $user->name = $request->name;
         $user->shippingAddress = $request->shippingAddress;
         $user->save();
@@ -193,7 +210,14 @@ class AuthController extends BaseController
 		    $user->is_verify = 1;
 		    $user->markEmailAsVerified();
 		    $user->save();
-		    return $this->SendResponse('Email verified successfully', 200);
+            if ($user->is_Admin == 1) {
+                $success['name'] = $user->name;
+	            $success['is_Admin'] = $user->is_Admin;
+                $success['photo'] = $user->photo;
+                $success['token'] = $user->createToken('customer')->accessToken;
+		        return $this->SendResponse($success, 200);
+            }
+		    return $this->SendResponse('Email verified', 200);
 	    }
 
         if ($user->is_verify == 1) {
