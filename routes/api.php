@@ -28,6 +28,7 @@ Route::post('reset', 'API\AuthController@passwordReset');
 Route::post('logout', 'API\AuthController@logout')->middleware('auth:api');
 Route::put('update', 'API\AuthController@updateUserInformation')->middleware('auth:api');
 Route::post('verify', 'API\AuthController@emailVerify');
+Route::post('resend', 'API\AuthController@resendCode');
 
 Route::post('products', 'API\ProductController@index');
 Route::post('product/{id}', 'API\ProductController@show');
