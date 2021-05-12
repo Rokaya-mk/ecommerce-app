@@ -43,3 +43,27 @@ Route::post('deleteImage', 'API\ProductImageController@deleteImage')->middleware
 Route::post('addSize', 'API\ProductSizeController@addSize')->middleware('auth:api');
 Route::post('getProductSizes/{id}', 'API\ProductSizeController@getProductSizes')->middleware('auth:api');
 Route::post('deleteSize', 'API\ProductSizeController@deleteSize')->middleware('auth:api');
+
+//Coupons Routes
+
+    Route::get('displayCoupons','API\CouponController@displayCoupons')->middleware('auth:api','role');
+    Route::post('storeNewCoupon','API\CouponController@storeNewCoupon')->middleware('auth:api','role');
+    Route::put('updateCoupon/{id}','API\CouponController@updateCoupon')->middleware('auth:api','role');
+    Route::delete('destroyCoupon/{id}','API\CouponController@destroyCoupon')->middleware('auth:api','role');
+
+
+
+//UserBag
+Route::get('myBag','API\UserBagController@myBag');
+Route::post('addTobag/{id}','API\UserBagController@addTobag');
+Route::get('showProductBag/{id}','API\UserBagController@showProductBag');
+Route::put('updateBag/{id}','API\UserBagController@updateBag');
+Route::delete('deleteProductBag/{id}','API\UserBagController@deleteProductBag');
+Route::delete('destroyBag','API\UserBagController@destroyBag');
+
+
+
+
+
+
+
