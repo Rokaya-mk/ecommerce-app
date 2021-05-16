@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use DB;
 use Mail;
 use Illuminate\Mail\Mailable;
+use File;
 class AuthController extends BaseController
 {
     //Cutomers auth functions
@@ -22,7 +23,7 @@ class AuthController extends BaseController
             'password' => 'required',
             'c_password' => 'required | same:password',
             'shippingAddress' => 'required',
-            'photo' => 'nullable|mimes:jpg,jpeg,png|max:5048|image'
+            'photo' => 'nullable|mimes:jpg,jpeg,png|max:5048',
         ]);
 
         if($validator->fails()){
@@ -75,7 +76,7 @@ class AuthController extends BaseController
                     $message->to($email);
                     $message->subject('Verify your email');
                 });
-                $this->SendResponse('verify your email', 200);
+                return $this->SendResponse('verify your email', 200);
             }
         }
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
@@ -104,6 +105,8 @@ class AuthController extends BaseController
         }
         if ($request->has('photo')) {
             $newImageName = time() . '_' . $request->photo->getClientOriginalName();
+            $oldImage = substr($user->photo, 22);
+            File::delete(public_path($oldImage));
             $request->photo->move('uploads/ProfilePics', $newImageName);
             $imgaeURL = url('/uploads/ProfilePics'.'/'.$newImageName);
             $user->photo = $imgaeURL;
@@ -228,7 +231,7 @@ class AuthController extends BaseController
 
     public function resendCode(Request $request){
         $validator = Validator::make($request->all(), [
-            'email' => 'required',
+            'email' => 'required|email',
         ]);
         $email = $request['email'];
         $token = Str::random(4);
