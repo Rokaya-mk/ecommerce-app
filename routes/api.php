@@ -62,9 +62,7 @@ Route::put('updateBag/{id}','API\UserBagController@updateBag');
 Route::delete('deleteProductBag/{id}','API\UserBagController@deleteProductBag');
 Route::delete('destroyBag','API\UserBagController@destroyBag');
 
-
-
-
-
-
-
+Route::get('faq', 'API\FAQController@index');
+Route::post('addQuestion', 'API\FAQController@store')->middleware('auth:api');
+Route::put('update/question/{id}', 'API\FAQController@update')->middleware('auth:api');
+Route::delete('delete/question/{id}', 'API\FAQController@deleteQuestion')->middleware('auth:api');
