@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\FAQ;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
-
 class FAQController extends BaseController
 {
     public function index(){
@@ -81,7 +80,7 @@ class FAQController extends BaseController
             $user = Auth::user();
             if($user->is_Admin == 1)
             {
-                $FAQ = FAQ::find($request->id);
+                $FAQ = FAQ::find($id);
                 if(is_null($FAQ)){
                     return $this->SendError('Question is not found');
                 }
