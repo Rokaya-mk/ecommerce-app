@@ -38,12 +38,17 @@ Route::post('deleteProduct', 'API\ProductController@deleteProduct')->middleware(
 Route::post('searchForProduct', 'API\ProductController@searchForProduct');
 
 Route::post('addImage', 'API\ProductImageController@addImage')->middleware('auth:api');
-Route::post('getProductImagesUrls/{id}', 'API\ProductImageController@getProductImagesUrls')->middleware('auth:api');
+Route::post('getProductImagesUrls/{id}', 'API\ProductImageController@getProductImagesUrls');
 Route::post('deleteImage', 'API\ProductImageController@deleteImage')->middleware('auth:api');
 
 Route::post('addSize', 'API\ProductSizeController@addSize')->middleware('auth:api');
-Route::post('getProductSizes/{id}', 'API\ProductSizeController@getProductSizes')->middleware('auth:api');
+Route::post('getProductSizes/{id}', 'API\ProductSizeController@getProductSizes');
 Route::post('deleteSize', 'API\ProductSizeController@deleteSize')->middleware('auth:api');
+
+Route::post('addColorQuantityforCertainSize', 'API\ProductSizeColorQuantityController@addColorQuantityforCertainSize')->middleware('auth:api');
+Route::post('getProductColorQuantityofCertainSize', 'API\ProductSizeColorQuantityController@getProductColorQuantityofCertainSize');
+Route::post('deleteColorofCertainSize', 'API\ProductSizeColorQuantityController@deleteColorofCertainSize')->middleware('auth:api');
+Route::post('updateColorQuantityofCertainSize', 'API\ProductSizeColorQuantityController@updateColorQuantityofCertainSize')->middleware('auth:api');
 
 //Coupons Routes
 
