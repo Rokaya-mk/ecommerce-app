@@ -66,3 +66,8 @@ Route::get('faq', 'API\FAQController@index');
 Route::post('addQuestion', 'API\FAQController@store')->middleware('auth:api');
 Route::put('update/question/{id}', 'API\FAQController@update')->middleware('auth:api');
 Route::delete('delete/question/{id}', 'API\FAQController@deleteQuestion')->middleware('auth:api');
+
+Route::get('oci', 'API\OwnerCommunicationInfoController@index');
+Route::post('add/communication', 'API\OwnerCommunicationInfoController@store')->middleware('auth:api');
+Route::put('update/communication/{id}', 'API\OwnerCommunicationInfoController@update')->middleware('auth:api');
+Route::delete('delete/communication/{id}', 'API\OwnerCommunicationInfoController@delete')->middleware('auth:api');
