@@ -14,7 +14,7 @@ class CreateOrdersTable extends Migration
     public function up()
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->unsignedBigInteger('id');
             $table->unsignedBigInteger('user_id');
             $table->dateTime('date_sent');
             $table->dateTime('date_target');
@@ -23,6 +23,7 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('coupon_id');
             $table->boolean('money_payement')->default(0);
             $table->boolean('is_order_sent')->default(0);
+            $table->primary('id');
             $table->foreign('user_id')->references('id')->on('users') ->onDelete('cascade');
             $table->foreign('coupon_id')->references('id')->on('coupons') ->onDelete('cascade');
             $table->timestamps();
