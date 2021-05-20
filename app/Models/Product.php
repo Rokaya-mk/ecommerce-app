@@ -25,4 +25,8 @@ class Product extends Model
     {
     	return $this->hasMany('App\Models\Product_size');
     }
+
+    public function user_bags(){
+        return $this->hasMany('App\Models\User_bag');
+    }
 }

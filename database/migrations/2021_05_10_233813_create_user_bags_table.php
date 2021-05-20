@@ -14,9 +14,10 @@ class CreateUserBagsTable extends Migration
     public function up()
     {
         Schema::create('user_bags', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('order_id')->nullable();
             $table->integer('item_quantity');
             $table->string('color');
             $table->string('size');
@@ -24,6 +25,7 @@ class CreateUserBagsTable extends Migration
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
 
         });
     }

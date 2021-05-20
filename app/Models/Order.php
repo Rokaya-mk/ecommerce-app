@@ -10,8 +10,6 @@ class Order extends Model
     use HasFactory;
     protected $fillable=[
         'user_id',
-        'date_sent',
-        'date_target',
         'hasCoupon',
         'money_payement',
         'is_order_sent'
