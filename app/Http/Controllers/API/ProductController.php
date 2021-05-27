@@ -71,8 +71,8 @@ class ProductController extends BaseController
         {
             $input = $request->all();
             $validator = Validator::make($input , [
-            'name_en'=>'required|unique:products',
-            'name_ar'=>'required|unique:products',
+            'name_en'=>'required',
+            'name_ar'=>'required',
             'description_en'=>'required',
             'description_ar'=>'required',
             'price'=>'required'

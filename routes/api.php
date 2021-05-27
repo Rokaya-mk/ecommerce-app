@@ -38,25 +38,39 @@ Route::post('deleteProduct', 'API\ProductController@deleteProduct')->middleware(
 Route::post('searchForProduct', 'API\ProductController@searchForProduct');
 
 Route::post('addImage', 'API\ProductImageController@addImage')->middleware('auth:api');
-Route::post('getProductImagesUrls/{id}', 'API\ProductImageController@getProductImagesUrls')->middleware('auth:api');
+Route::post('getProductImagesUrls/{id}', 'API\ProductImageController@getProductImagesUrls');
 Route::post('deleteImage', 'API\ProductImageController@deleteImage')->middleware('auth:api');
 
 Route::post('addSize', 'API\ProductSizeController@addSize')->middleware('auth:api');
-Route::post('getProductSizes/{id}', 'API\ProductSizeController@getProductSizes')->middleware('auth:api');
+Route::post('getProductSizes/{id}', 'API\ProductSizeController@getProductSizes');
 Route::post('deleteSize', 'API\ProductSizeController@deleteSize')->middleware('auth:api');
+
+Route::post('addColorQuantityforCertainSize', 'API\ProductSizeColorQuantityController@addColorQuantityforCertainSize')->middleware('auth:api');
+Route::post('getProductColorQuantityofCertainSize', 'API\ProductSizeColorQuantityController@getProductColorQuantityofCertainSize');
+Route::post('deleteColorofCertainSize', 'API\ProductSizeColorQuantityController@deleteColorofCertainSize')->middleware('auth:api');
+Route::post('updateColorQuantityofCertainSize', 'API\ProductSizeColorQuantityController@updateColorQuantityofCertainSize')->middleware('auth:api');
 
 //Coupons Routes
 
+<<<<<<< HEAD
 Route::get('displayCoupons','API\CouponController@displayCoupons')->middleware('auth:api');
 Route::post('storeNewCoupon','API\CouponController@storeNewCoupon')->middleware('auth:api');
 Route::put('updateCoupon/{id}','API\CouponController@updateCoupon')->middleware('auth:api');
 Route::delete('destroyCoupon/{id}','API\CouponController@destroyCoupon')->middleware('auth:api');
+=======
+    Route::get('displayCoupons','API\CouponController@displayCoupons')->middleware('auth:api');
+    Route::post('storeNewCoupon','API\CouponController@storeNewCoupon')->middleware('auth:api');
+    Route::put('updateCoupon/{id}','API\CouponController@updateCoupon')->middleware('auth:api');
+    Route::post('applyCoupon','API\CouponController@applyCoupon')->middleware('auth:api');
+    Route::delete('destroyCoupon/{id}','API\CouponController@destroyCoupon')->middleware('auth:api');
+>>>>>>> main
 
 
 
 //UserBag
 Route::middleware('auth:api')->group( function (){
 
+<<<<<<< HEAD
 Route::get('myBag','API\UserBagController@myBag');
 Route::post('addTobag/{id}','API\UserBagController@addTobag');
 Route::get('showProductBag/{id}','API\UserBagController@showProductBag');
@@ -64,8 +78,22 @@ Route::put('updateBag/{id}','API\UserBagController@updateBag');
 Route::delete('deleteProductBag/{id}','API\UserBagController@deleteProductBag');
 Route::delete('destroyBag','API\UserBagController@destroyBag');
 });
+=======
+    Route::get('myBag','API\UserBagController@myBag');
+    Route::post('addTobag/{id}','API\UserBagController@addTobag');
+    Route::get('showProductBag/{id}','API\UserBagController@showProductBag');
+    Route::put('updateBag/{id}','API\UserBagController@updateBag');
+    Route::delete('deleteProductBag/{id}','API\UserBagController@deleteProductBag');
+    Route::delete('destroyBag','API\UserBagController@destroyBag');
+    });
+>>>>>>> main
 
 Route::get('faq', 'API\FAQController@index');
 Route::post('addQuestion', 'API\FAQController@store')->middleware('auth:api');
 Route::put('update/question/{id}', 'API\FAQController@update')->middleware('auth:api');
 Route::delete('delete/question/{id}', 'API\FAQController@deleteQuestion')->middleware('auth:api');
+
+Route::get('oci', 'API\OwnerCommunicationInfoController@index');
+Route::post('add/communication', 'API\OwnerCommunicationInfoController@store')->middleware('auth:api');
+Route::put('update/communication/{id}', 'API\OwnerCommunicationInfoController@update')->middleware('auth:api');
+Route::delete('delete/communication/{id}', 'API\OwnerCommunicationInfoController@delete')->middleware('auth:api');

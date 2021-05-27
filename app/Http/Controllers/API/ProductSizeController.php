@@ -89,7 +89,7 @@ class ProductSizeController extends BaseController
                 return $this->SendResponse($deletedRows, 'size is deleted Successfully!');
             }
             else
-                return $this->SendError('You do not have rights to delete this product');
+                return $this->SendError('You do not have rights to delete this size');
         }catch (\Throwable $th) {
             return $this->SendError('Error',$th->getMessage());
         }
