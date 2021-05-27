@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Product_image;
 use App\Models\User_bag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,18 +21,15 @@ class UserBagController extends BaseController
         $items=User_bag::where('user_id',$user_id)->where('is_final_bag','new')->get();
         if($items->isEmpty())
             return $this->sendError('empty');
+            //get products list
         $products = Product::whereHas('user_bags', function ($q) use($user_id) {
-            $q->where('user_bags.user_id', $user_id);
-        })->get();
-        // $products=[];
-        // foreach($items as $item){
-        //     $products[]=[
-        //         'id'=>$item->product_id,
-        //     ];
-        // }
-        // $products_info=DB::table('products')->whereIn('id',$products)->get();
+                                    $q->where('user_bags.user_id', $user_id);
+            })->get();
+        //get images of products
+        $images=Product_image::whereIn('product_id',$products->pluck('id'))->get();
+
         //return items with products
-        return $this->SendResponse([$items,$products],'bag list');
+        return $this->SendResponse([$items,$products,$images],'bag list');
 
 
     }
@@ -81,7 +79,8 @@ class UserBagController extends BaseController
             $product=Product::findOrFail($id);
             if(is_null($product))
                 return $this->sendError('product not founded');
-            return $this->SendResponse($product, 'Product founded successfully');
+            $product->Product_image;
+            return $this->SendResponse( $product, 'Product founded successfully');
         } catch (\Throwable $th) {
             return $this->SendError('Error',$th->getMessage());
         }
