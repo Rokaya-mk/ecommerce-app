@@ -109,6 +109,24 @@ class CouponController extends BaseController
         }
         }
 
+<<<<<<< HEAD
+    }
+
+    //Applay coupon for users
+    public function applyCoupon(Request $request){
+        $coupon = Coupon::where('discount_code', $request->coupon)->first();
+        if(!$coupon)
+            return $this->SendError('Invalid Coupon!');
+        else{
+                $getDate=Carbon::now()->format('Y-m-d H:i:s');
+                if($coupon->expired_date<$getDate)
+                return $this->SendError('this coupon is expired !');
+                else{
+
+                }
+        }
+=======
+>>>>>>> main
     }
 
     public function applyCoupon(Request $request){
