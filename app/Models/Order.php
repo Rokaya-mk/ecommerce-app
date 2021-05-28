@@ -22,4 +22,8 @@ class Order extends Model
     public function coupons(){
         return $this->belongsTo('App\Models\Coupon');
     }
+
+    public function payment(){
+        return $this->hasOne('App\Models\Payment');
+    }
 }
