@@ -52,25 +52,16 @@ Route::post('updateColorQuantityofCertainSize', 'API\ProductSizeColorQuantityCon
 
 //Coupons Routes
 
-<<<<<<< HEAD
 Route::get('displayCoupons','API\CouponController@displayCoupons')->middleware('auth:api');
 Route::post('storeNewCoupon','API\CouponController@storeNewCoupon')->middleware('auth:api');
 Route::put('updateCoupon/{id}','API\CouponController@updateCoupon')->middleware('auth:api');
 Route::delete('destroyCoupon/{id}','API\CouponController@destroyCoupon')->middleware('auth:api');
-=======
-    Route::get('displayCoupons','API\CouponController@displayCoupons')->middleware('auth:api');
-    Route::post('storeNewCoupon','API\CouponController@storeNewCoupon')->middleware('auth:api');
-    Route::put('updateCoupon/{id}','API\CouponController@updateCoupon')->middleware('auth:api');
-    Route::post('applyCoupon','API\CouponController@applyCoupon')->middleware('auth:api');
-    Route::delete('destroyCoupon/{id}','API\CouponController@destroyCoupon')->middleware('auth:api');
->>>>>>> main
 
 
 
 //UserBag
 Route::middleware('auth:api')->group( function (){
 
-<<<<<<< HEAD
 Route::get('myBag','API\UserBagController@myBag');
 Route::post('addTobag/{id}','API\UserBagController@addTobag');
 Route::get('showProductBag/{id}','API\UserBagController@showProductBag');
@@ -78,15 +69,6 @@ Route::put('updateBag/{id}','API\UserBagController@updateBag');
 Route::delete('deleteProductBag/{id}','API\UserBagController@deleteProductBag');
 Route::delete('destroyBag','API\UserBagController@destroyBag');
 });
-=======
-    Route::get('myBag','API\UserBagController@myBag');
-    Route::post('addTobag/{id}','API\UserBagController@addTobag');
-    Route::get('showProductBag/{id}','API\UserBagController@showProductBag');
-    Route::put('updateBag/{id}','API\UserBagController@updateBag');
-    Route::delete('deleteProductBag/{id}','API\UserBagController@deleteProductBag');
-    Route::delete('destroyBag','API\UserBagController@destroyBag');
-    });
->>>>>>> main
 
 Route::get('faq', 'API\FAQController@index');
 Route::post('addQuestion', 'API\FAQController@store')->middleware('auth:api');
