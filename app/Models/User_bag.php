@@ -12,6 +12,7 @@ class User_bag extends Model
     protected $fillable=[
         'user_id',
         'product_id',
+        'order_id',
         'item_quantity',
         'color',
         'size',
@@ -24,5 +25,9 @@ class User_bag extends Model
 
     public function products(){
         return $this->hasMany('App\Models\Product');
+    }
+
+    public function order(){
+        return $this->belongsTo('App\Models\Order');
     }
 }

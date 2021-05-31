@@ -12,7 +12,8 @@ class Order extends Model
         'user_id',
         'hasCoupon',
         'money_payement',
-        'is_order_sent'
+        'is_order_sent',
+        'unique_order_id'
     ];
     public function users(){
         return $this->belongsTo('App\Models\User');
@@ -20,4 +21,8 @@ class Order extends Model
     public function coupons(){
         return $this->belongsTo('App\Models\Coupon');
     }
+    public function payment(){
+        return $this->hasOne('App\Models\Payment');
+    }
+
 }
