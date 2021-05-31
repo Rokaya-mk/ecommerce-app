@@ -37,6 +37,7 @@ class UserBagController extends BaseController
     public function addTobag(Request $request,$id){
 
         $product=Product::findOrFail($id);
+
         //dd($product);
         if(!$product){
             return $this->SendError('Product not found');
@@ -54,7 +55,8 @@ class UserBagController extends BaseController
             return $this->SendError('you can not add more than '.$product->quantity.'product');
         }
         try {
-            $newItem=new User_bag();
+
+            $newItem = new User_bag();
             $newItem->user_id=$user_id;
             $newItem->product_id=$id;
             $newItem->item_quantity=$request->item_quantity;
@@ -68,8 +70,8 @@ class UserBagController extends BaseController
             return $this->SendError('Error to add product to your bag',$th->getMessage());
         }
 
-    }
 
+    }
 
 
     public function showProductBag($id)

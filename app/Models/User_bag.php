@@ -24,7 +24,11 @@ class User_bag extends Model
     }
 
     public function products(){
-        return $this->hasMany('App\Models\Product');
+        return $this->belongsTo('App\Models\Product');
+    }
+
+    public function order(){
+        return $this->belongsTo('App\Models\Order');
     }
 
     public function order(){

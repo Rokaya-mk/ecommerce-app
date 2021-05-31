@@ -38,12 +38,17 @@ Route::post('deleteProduct', 'API\ProductController@deleteProduct')->middleware(
 Route::post('searchForProduct', 'API\ProductController@searchForProduct');
 
 Route::post('addImage', 'API\ProductImageController@addImage')->middleware('auth:api');
-Route::post('getProductImagesUrls/{id}', 'API\ProductImageController@getProductImagesUrls')->middleware('auth:api');
+Route::post('getProductImagesUrls/{id}', 'API\ProductImageController@getProductImagesUrls');
 Route::post('deleteImage', 'API\ProductImageController@deleteImage')->middleware('auth:api');
 
 Route::post('addSize', 'API\ProductSizeController@addSize')->middleware('auth:api');
-Route::post('getProductSizes/{id}', 'API\ProductSizeController@getProductSizes')->middleware('auth:api');
+Route::post('getProductSizes/{id}', 'API\ProductSizeController@getProductSizes');
 Route::post('deleteSize', 'API\ProductSizeController@deleteSize')->middleware('auth:api');
+
+Route::post('addColorQuantityforCertainSize', 'API\ProductSizeColorQuantityController@addColorQuantityforCertainSize')->middleware('auth:api');
+Route::post('getProductColorQuantityofCertainSize', 'API\ProductSizeColorQuantityController@getProductColorQuantityofCertainSize');
+Route::post('deleteColorofCertainSize', 'API\ProductSizeColorQuantityController@deleteColorofCertainSize')->middleware('auth:api');
+Route::post('updateColorQuantityofCertainSize', 'API\ProductSizeColorQuantityController@updateColorQuantityofCertainSize')->middleware('auth:api');
 
 //Coupons Routes
 
@@ -88,3 +93,8 @@ Route::get('faq', 'API\FAQController@index');
 Route::post('addQuestion', 'API\FAQController@store')->middleware('auth:api');
 Route::put('update/question/{id}', 'API\FAQController@update')->middleware('auth:api');
 Route::delete('delete/question/{id}', 'API\FAQController@deleteQuestion')->middleware('auth:api');
+
+Route::get('oci', 'API\OwnerCommunicationInfoController@index');
+Route::post('add/communication', 'API\OwnerCommunicationInfoController@store')->middleware('auth:api');
+Route::put('update/communication/{id}', 'API\OwnerCommunicationInfoController@update')->middleware('auth:api');
+Route::delete('delete/communication/{id}', 'API\OwnerCommunicationInfoController@delete')->middleware('auth:api');

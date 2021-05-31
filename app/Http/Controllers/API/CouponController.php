@@ -15,9 +15,15 @@ class CouponController extends BaseController
 
     public function displayCoupons()
     {
-        $coupons = Coupon::orderBy('id', 'DESC')->get();
-        if($coupons->count()==0){
-            return $this->SendError('coupons list is empty');
+        $user=User::findorFail(Auth::id());
+        if($user->is_Admin == 1){
+            $coupons = Coupon::orderBy('id', 'DESC')->get();
+            if($coupons->count()==0){
+                return $this->SendError('coupons list is empty');
+            }
+            else{
+                return $this->SendResponse($coupons,'list of coupons');
+            }
         }
         $user=User::findorFail(Auth::id());
         if($user->is_Admin == 1){
@@ -27,13 +33,9 @@ class CouponController extends BaseController
             }
             else{
                 return $this->SendResponse($coupons,'list of coupons');
-
                 }
-            }
-            else{
-                return $this->SendResponse($coupons,'list of coupons');
-                return $this->SendError('You do not have rights to access to coupons list');
-            }
+         }
+        return $this->SendError('You do not have rights to access to coupons list');
     }
 
 
@@ -89,6 +91,7 @@ class CouponController extends BaseController
                 }
             }
         }
+
     }
 
     //delete coupon
@@ -110,7 +113,9 @@ class CouponController extends BaseController
                 return $this->SendError('cant\'t Delete Coupon',$th->getMessage());
             }
         }
-    }
+        }
+
+
     }
      //Applay coupon for users
      public function applyCoupon(Request $request){
