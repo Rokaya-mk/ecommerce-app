@@ -16,13 +16,14 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
-            $table->dateTime('date_sent');
-            $table->dateTime('date_target');
+            $table->dateTime('date_sent')->nullable();
+            $table->dateTime('date_target')->nullable();
             $table->boolean('hasCoupon');
             $table->string('couponDiscount')->nullable();
             $table->unsignedBigInteger('coupon_id');
             $table->boolean('money_payement')->default(0);
             $table->boolean('is_order_sent')->default(0);
+            $table->string('unique_order_id');
             $table->foreign('user_id')->references('id')->on('users') ->onDelete('cascade');
             $table->foreign('coupon_id')->references('id')->on('coupons') ->onDelete('cascade');
             $table->timestamps();

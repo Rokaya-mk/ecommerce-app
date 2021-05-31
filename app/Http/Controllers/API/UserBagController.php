@@ -15,24 +15,22 @@ class UserBagController extends BaseController
     //display bag content
     public function myBag(Request $request)
     {
+        try {
+            $user_id=Auth::id();
+            $items=User_bag::where('user_id',$user_id)->where('is_final_bag','new')->get();
+            if($items->isEmpty())
+                return $this->sendError('empty');
+            $products = Product::whereHas('user_bags', function ($q) use($user_id) {
+                $q->where('user_bags.user_id', $user_id);
+            })->get();
 
-        $user_id=Auth::id();
-        $items=User_bag::where('user_id',$user_id)->where('is_final_bag','new')->get();
-        if($items->isEmpty())
-            return $this->sendError('empty');
-        $products = Product::whereHas('user_bags', function ($q) use($user_id) {
-            $q->where('user_bags.user_id', $user_id);
-        })->get();
-        // $products=[];
-        // foreach($items as $item){
-        //     $products[]=[
-        //         'id'=>$item->product_id,
-        //     ];
-        // }
-        // $products_info=DB::table('products')->whereIn('id',$products)->get();
-        //return items with products
-        return $this->SendResponse([$items,$products],'bag list');
-
+            return $this->SendResponse([
+                'bag items'=>$items,
+                'products info' =>$products
+            ],'bag list');
+        } catch (\Throwable $th) {
+            return $this->SendError('Error ',$th->getMessage());
+        }
 
     }
 
@@ -44,16 +42,17 @@ class UserBagController extends BaseController
         if(!$product){
             return $this->SendError('Product not found');
         }
-
-         $user_id=Auth::id();
-
+        $user_id=Auth::id();
         //search all products not ordered in user_bag
         $cart=User_bag::where('user_id',$user_id)->where('is_final_bag','new')->get();
 
         foreach($cart as $item){
-
             if($item->product_id==$id)
             return $this->SendError('Product already exist in your bag');
+        }
+        //verify if item quantity less than product quantity
+        if(($request->item_quantity)>($product->quantity)){
+            return $this->SendError('you can not add more than '.$product->quantity.'product');
         }
         try {
 
@@ -89,53 +88,55 @@ class UserBagController extends BaseController
 
     public function updateBag(Request $request,$itemId)
     {
-        $cartItem=User_bag::where('id',$itemId)->where('is_final_bag','new')->first();
 
-        if ($cartItem) {
-            $cartItem->item_quantity=$request->item_quantity;
-            $cartItem->color=$request->color;
-            $cartItem->size=$request->size;
-            try {
-                $cartItem->save();
-                return $this->SendResponse($cartItem, 'product bag Updated Successfully!');
-            } catch (\Throwable $th) {
-                return $this->SendError('cant\'t Update product in your bag',$th->getMessage());
-            }
+            $user_id=Auth::id();
+            $cartItem=User_bag::where('id',$itemId)->where('user_id',$user_id)->where('is_final_bag','new')->first();
+
+            if ($cartItem) {
+                $cartItem->item_quantity=$request->item_quantity;
+                $cartItem->color=$request->color;
+                $cartItem->size=$request->size;
+                try {
+                    $cartItem->save();
+                    return $this->SendResponse($cartItem, 'product bag Updated Successfully!');
+                } catch (\Throwable $th) {
+                    return $this->SendError('cant\'t Update product in your bag',$th->getMessage());
+                }
+        }else{
+            return $this->SendError('can\'t access to item bag,not founded');
         }
 
     }
 
 
-    public function deleteProductBag(Request $request,$idProduct)
+    public function deleteItemBag($itemId)
     {
-
-        $cartItem=User_bag::findOrFail($idProduct);
-        if(!$cartItem)
-        return $this->sendError('product not founded in your bag');
-        try {
-            $cartItem->delete();
-            return $this->SendResponse($cartItem, 'product deleted successfully');
-        } catch (\Throwable $th) {
-            return $this->SendError('Error to delete product',$th->getMessage());
-        }
+            $cartItem=User_bag::findOrFail($itemId);
+            if(!$cartItem)
+            return $this->sendError('product not founded in your bag');
+            try {
+                $cartItem->delete();
+                return $this->SendResponse($cartItem, 'product deleted successfully');
+            } catch (\Throwable $th) {
+                return $this->SendError('Error to delete product',$th->getMessage());
+            }
 
 
     }
 
     public function destroyBag(Request $request){
 
-        $user_id=auth('api')->user()->id;
-        $cart=User_bag::where('user_id',$user_id)->where('is_final_bag','new')->get();
-        try {
-            foreach($cart as $item){
-                $item->delete();
+            $user_id=Auth::user()->id;
+            $cart=User_bag::where('user_id',$user_id)->where('is_final_bag','new')->get();
+            try {
+                foreach($cart as $item){
+                    $item->delete();
+                }
+                return $this->SendResponse($cart,'bag Deleted Sucessfully');
+            } catch (\Throwable $th) {
+                return $this->SendError('Error',$th->getMessage());
             }
-            return $this->SendResponse($cart,'bag Deleted Sucessfully');
-        } catch (\Throwable $th) {
-            return $this->SendError('Error',$th->getMessage());
 
-
-    }
 
 
     }
