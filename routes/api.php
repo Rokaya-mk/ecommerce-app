@@ -79,3 +79,8 @@ Route::get('oci', 'API\OwnerCommunicationInfoController@index');
 Route::post('add/communication', 'API\OwnerCommunicationInfoController@store')->middleware('auth:api');
 Route::put('update/communication/{id}', 'API\OwnerCommunicationInfoController@update')->middleware('auth:api');
 Route::delete('delete/communication/{id}', 'API\OwnerCommunicationInfoController@delete')->middleware('auth:api');
+
+Route::get('reviews', 'API\ReviewController@getReview');
+Route::post('add/review', 'API\ReviewController@addReview')->middleware('auth:api');
+Route::put('edit/review/{id}', 'API\ReviewController@editReview')->middleware('auth:api');
+Route::delete('delete/review/{id}', 'API\ReviewController@deleteReview')->middleware('auth:api');

@@ -108,8 +108,6 @@ class CouponController extends BaseController
             }
         }
         }
-
-<<<<<<< HEAD
     }
 
     //Applay coupon for users
@@ -125,8 +123,6 @@ class CouponController extends BaseController
 
                 }
         }
-=======
->>>>>>> main
     }
 
     public function applyCoupon(Request $request){
