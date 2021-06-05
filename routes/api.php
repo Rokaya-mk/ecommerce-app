@@ -84,3 +84,4 @@ Route::get('reviews', 'API\ReviewController@getReview');
 Route::post('add/review', 'API\ReviewController@addReview')->middleware('auth:api');
 Route::put('edit/review/{id}', 'API\ReviewController@editReview')->middleware('auth:api');
 Route::delete('delete/review/{id}', 'API\ReviewController@deleteReview')->middleware('auth:api');
+
