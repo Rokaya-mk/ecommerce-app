@@ -14,7 +14,7 @@ class FAQController extends BaseController
             if($FAQs->count() == 0){
                 return $this->SendError('There is no questions');
             }
-            return $this->SendResponse($FAQs, 'FAQs recived succefully');
+            return $this->SendResponse($FAQs, 'FAQs recived successfully');
         } catch (\Throwable $th) {
             return $this->SendError('Something went wrong', $th->getMessage());
         }
@@ -34,7 +34,7 @@ class FAQController extends BaseController
             $user = Auth::user();
             if ($user->is_Admin == 1) {
                 $FAQ = FAQ::create($request->all());
-                return $this->SendResponse($FAQ, 'Question added succefully');
+                return $this->SendResponse($FAQ, 'Question added successfully');
             }else{
                 return $this->SendError('You do not have right to add a question');
             }

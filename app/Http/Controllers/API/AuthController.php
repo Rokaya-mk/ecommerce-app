@@ -9,8 +9,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use DB;
-use Mail;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Mail\Mailable;
 use File;
 class AuthController extends BaseController
@@ -105,7 +105,7 @@ class AuthController extends BaseController
         }
         if ($request->has('photo')) {
             $newImageName = time() . '_' . $request->photo->getClientOriginalName();
-            $oldImage = substr($user->photo, 22);
+            $oldImage = substr($review->photo, strlen($request->url()));;
             File::delete(public_path($oldImage));
             $request->photo->move('uploads/ProfilePics', $newImageName);
             $imgaeURL = url('/uploads/ProfilePics'.'/'.$newImageName);

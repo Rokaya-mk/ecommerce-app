@@ -10,10 +10,11 @@ class Order extends Model
     use HasFactory;
     protected $fillable=[
         'user_id',
+        'date_sent',
+        'date_target',
         'hasCoupon',
         'money_payement',
-        'is_order_sent',
-        'unique_order_id'
+        'is_order_sent'
     ];
     public function users(){
         return $this->belongsTo('App\Models\User');
@@ -21,8 +22,8 @@ class Order extends Model
     public function coupons(){
         return $this->belongsTo('App\Models\Coupon');
     }
+
     public function payment(){
         return $this->hasOne('App\Models\Payment');
     }
-
 }

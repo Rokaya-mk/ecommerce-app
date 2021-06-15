@@ -8,18 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class Payment extends Model
 {
     use HasFactory;
+
     protected $fillable=[
-        'user_id',
-        'order_id',
-        'payment_method',
-        'amount',
-        'payment_date'
+        'user_id','order_id','payment_method','amount_paid'
     ];
+
+    public function user(){
+        return $this->belongsTo('App\Models\User');
+    }
 
     public function order(){
         return $this->belongsTo('App\Models\Order');
-    }
-    public function user(){
-        return $this->belongsTo('App\Models\User');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Product_image;
 use App\Models\User_bag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,22 +16,21 @@ class UserBagController extends BaseController
     //display bag content
     public function myBag(Request $request)
     {
-        try {
-            $user_id=Auth::id();
-            $items=User_bag::where('user_id',$user_id)->where('is_final_bag','new')->get();
-            if($items->isEmpty())
-                return $this->sendError('empty');
-            $products = Product::whereHas('user_bags', function ($q) use($user_id) {
-                $q->where('user_bags.user_id', $user_id);
-            })->get();
 
-            return $this->SendResponse([
-                'bag items'=>$items,
-                'products info' =>$products
-            ],'bag list');
-        } catch (\Throwable $th) {
-            return $this->SendError('Error ',$th->getMessage());
-        }
+        $user_id=Auth::id();
+        $items=User_bag::where('user_id',$user_id)->where('is_final_bag','new')->get();
+        if($items->isEmpty())
+            return $this->sendError('empty');
+            //get products list
+        $products = Product::whereHas('user_bags', function ($q) use($user_id) {
+                                    $q->where('user_bags.user_id', $user_id);
+            })->get();
+        //get images of products
+        $images=Product_image::whereIn('product_id',$products->pluck('id'))->get();
+
+        //return items with products
+        return $this->SendResponse([$items,$products,$images],'bag list');
+
 
     }
 
@@ -42,17 +42,16 @@ class UserBagController extends BaseController
         if(!$product){
             return $this->SendError('Product not found');
         }
-        $user_id=Auth::id();
+
+         $user_id=Auth::id();
+
         //search all products not ordered in user_bag
         $cart=User_bag::where('user_id',$user_id)->where('is_final_bag','new')->get();
 
         foreach($cart as $item){
+
             if($item->product_id==$id)
             return $this->SendError('Product already exist in your bag');
-        }
-        //verify if item quantity less than product quantity
-        if(($request->item_quantity)>($product->quantity)){
-            return $this->SendError('you can not add more than '.$product->quantity.'product');
         }
         try {
 
@@ -80,7 +79,8 @@ class UserBagController extends BaseController
             $product=Product::findOrFail($id);
             if(is_null($product))
                 return $this->sendError('product not founded');
-            return $this->SendResponse($product, 'Product founded successfully');
+            $product->Product_image;
+            return $this->SendResponse( $product, 'Product founded successfully');
         } catch (\Throwable $th) {
             return $this->SendError('Error',$th->getMessage());
         }
@@ -88,55 +88,53 @@ class UserBagController extends BaseController
 
     public function updateBag(Request $request,$itemId)
     {
+        $cartItem=User_bag::where('id',$itemId)->where('is_final_bag','new')->first();
 
-            $user_id=Auth::id();
-            $cartItem=User_bag::where('id',$itemId)->where('user_id',$user_id)->where('is_final_bag','new')->first();
-
-            if ($cartItem) {
-                $cartItem->item_quantity=$request->item_quantity;
-                $cartItem->color=$request->color;
-                $cartItem->size=$request->size;
-                try {
-                    $cartItem->save();
-                    return $this->SendResponse($cartItem, 'product bag Updated Successfully!');
-                } catch (\Throwable $th) {
-                    return $this->SendError('cant\'t Update product in your bag',$th->getMessage());
-                }
-        }else{
-            return $this->SendError('can\'t access to item bag,not founded');
+        if ($cartItem) {
+            $cartItem->item_quantity=$request->item_quantity;
+            $cartItem->color=$request->color;
+            $cartItem->size=$request->size;
+            try {
+                $cartItem->save();
+                return $this->SendResponse($cartItem, 'product bag Updated Successfully!');
+            } catch (\Throwable $th) {
+                return $this->SendError('cant\'t Update product in your bag',$th->getMessage());
+            }
         }
 
     }
 
 
-    public function deleteItemBag($itemId)
+    public function deleteProductBag(Request $request,$idProduct)
     {
-            $cartItem=User_bag::findOrFail($itemId);
-            if(!$cartItem)
-            return $this->sendError('product not founded in your bag');
-            try {
-                $cartItem->delete();
-                return $this->SendResponse($cartItem, 'product deleted successfully');
-            } catch (\Throwable $th) {
-                return $this->SendError('Error to delete product',$th->getMessage());
-            }
+
+        $cartItem=User_bag::findOrFail($idProduct);
+        if(!$cartItem)
+        return $this->sendError('product not founded in your bag');
+        try {
+            $cartItem->delete();
+            return $this->SendResponse($cartItem, 'product deleted successfully');
+        } catch (\Throwable $th) {
+            return $this->SendError('Error to delete product',$th->getMessage());
+        }
 
 
     }
 
     public function destroyBag(Request $request){
 
-            $user_id=Auth::user()->id;
-            $cart=User_bag::where('user_id',$user_id)->where('is_final_bag','new')->get();
-            try {
-                foreach($cart as $item){
-                    $item->delete();
-                }
-                return $this->SendResponse($cart,'bag Deleted Sucessfully');
-            } catch (\Throwable $th) {
-                return $this->SendError('Error',$th->getMessage());
+        $user_id=auth('api')->user()->id;
+        $cart=User_bag::where('user_id',$user_id)->where('is_final_bag','new')->get();
+        try {
+            foreach($cart as $item){
+                $item->delete();
             }
+            return $this->SendResponse($cart,'bag Deleted Sucessfully');
+        } catch (\Throwable $th) {
+            return $this->SendError('Error',$th->getMessage());
 
+
+    }
 
 
     }
