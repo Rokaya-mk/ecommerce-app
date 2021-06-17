@@ -18,7 +18,7 @@ class CreatePaymentsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('order_id');
             $table->string('payment_method');
-            $table->decimal('amount_paid',8,2);
+            $table->decimal('amount_paid',10,2);
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users') ->onDelete('cascade');
             $table->foreign('order_id')->references('id')->on('orders') ->onDelete('cascade');

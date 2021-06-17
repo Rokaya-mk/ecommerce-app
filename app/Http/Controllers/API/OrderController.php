@@ -7,6 +7,8 @@ use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Product;
+use App\Models\Product_size;
+use App\Models\Product_size_color_quantity;
 use App\Models\User;
 use App\Models\User_bag;
 use Carbon\Carbon;
@@ -23,15 +25,24 @@ class OrderController extends BaseController
             $user_id=Auth::user()->id;
             //get products in user_bag for user
             $products_bag=User_bag::where('user_id',$user_id)->where('is_final_bag','new')->get();
-            if($products_bag->isEmpty())
+            if(is_null($products_bag))
                 return $this->SendError('you don\'t have any products to order in your bag,try to add some!');
             //delete products that's not available
             foreach($products_bag as $item){
-                $product_item=Product::findOrFail($item->product_id);
-                if(!$product_item){
+                //dd($item->product_id);
+                $product_item=Product::find($item->product_id);
+                if(is_null($product_item)){
                     return $this->SendError('this product not founded');
                 }else{
-                    if(($product_item->quantity)<=0){
+                    //get size from Product_size table
+                    $size=Product_size::where('size',$item->size)->first();
+                    //dd($size->id);
+                    $productQuantityItem=Product_size_color_quantity::where('product_id',$product_item->id)
+                                            ->where('size_id',$size->id)
+                                            ->where('color',$item->color)->first();
+
+                    $quantityItem=Product_size_color_quantity::find($productQuantityItem->id);
+                    if(($quantityItem->quantity)<=0){
                         //if it is not available delete item in bag
                         try {
                             $item->delete();
@@ -70,15 +81,14 @@ class OrderController extends BaseController
             $orderTotal=0;
             foreach($products_bag as $item){
                 //get product in product table
-                $product_item=Product::findOrFail($item->product_id);
+                $product_item=Product::find($item->product_id);
                 $orderTotal+=($item->item_quantity)*($product_item->price);
-                // $product_item->quantity=($product_item->quantity)-($item->item_quantity);
-               // $product_item->save();
             }
             //if order has coupon
             if($request->has('coupon')){
                 //get coupon discount
                 $coupon = Coupon::where('discount_code', $request->coupon)->first();
+                //dd($coupon);
                 if($coupon->discount_type=='PERCENTAGE'){
                     $orderTotal = $orderTotal - (($coupon->discount_value / 100) * $orderTotal);
                 }else if($coupon->discount_type=='Fix')
@@ -87,16 +97,15 @@ class OrderController extends BaseController
                 $order->hasCoupon=true;
                 $order->couponDiscount=$coupon->discount_value;
                 $order->coupon_id=$coupon->id;
-                $order->save();
             }
+            $order->save();
             if($request->has('payment_method')){
                 try {
                     $payment=new Payment();
                 $payment->user_id=$user_id;
                 $payment->order_id=$order->id;
                 $payment->payment_method=$request->payment_method;
-                $payment->amount=$orderTotal;
-                $payment->payment_date=Carbon::now()->format('Y-m-d H:i:s');
+                $payment->amount_paid=$orderTotal;
                 $payment->save();
                 } catch (\Throwable $th) {
                     return $this->SendError('Error',$th->getMessage());
@@ -108,10 +117,15 @@ class OrderController extends BaseController
             //update quantity for products
             foreach($products_bag as $item){
                 $item->is_final_bag="old";
-                $product_item=Product::findOrFail($item->product_id);
+                $product_item=Product::find($item->product_id);
+                $productQuantityItem=Product_size_color_quantity::where('product_id',$product_item->id)
+                                            ->where('size_id',$size->id)
+                                            ->where('color',$item->color)->first();
+
+                    $quantityItem=Product_size_color_quantity::find($productQuantityItem->id);
                 //substract quantity taken by user
-                $product_item->quantity=($product_item->quantity)-($item->item_quantity);
-                $product_item->save();
+                $productQuantityItem->quantity=($productQuantityItem->quantity)-($item->item_quantity);
+                $productQuantityItem->save();
                 $item->save();
             }
             return $this->SendResponse($order,'order created Successfully');

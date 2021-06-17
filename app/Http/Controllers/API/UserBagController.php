@@ -8,19 +8,17 @@ use App\Models\Product_image;
 use App\Models\User_bag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 
 class UserBagController extends BaseController
 {
     //display bag content
-    public function myBag(Request $request)
+    public function myBag()
     {
-
         $user_id=Auth::id();
         $items=User_bag::where('user_id',$user_id)->where('is_final_bag','new')->get();
         if($items->isEmpty())
-            return $this->sendError('empty');
+            return $this->sendError('your bag is empty');
             //get products list
         $products = Product::whereHas('user_bags', function ($q) use($user_id) {
                                     $q->where('user_bags.user_id', $user_id);
@@ -29,22 +27,27 @@ class UserBagController extends BaseController
         $images=Product_image::whereIn('product_id',$products->pluck('id'))->get();
 
         //return items with products
-        return $this->SendResponse([$items,$products,$images],'bag list');
-
+        return $this->SendResponse([$items,$products,$images],'bag list retreived Sucessfully');
 
     }
 
+    //add product to my bag
     public function addTobag(Request $request,$id){
 
-        $product=Product::findOrFail($id);
-
+        //validate data
+        $validateData=Validator::make($request->all(), [
+            'item_quantity'=>'required',
+            'color'=>'required',
+            'size'=>'required|in:S,M,L,XL,XXL',
+        ]);
+        if ($validateData->fails())
+                return $this->SendError(' Invalid data' ,$validateData->errors());
+        $product=Product::find($id);
         //dd($product);
-        if(!$product){
+        if(is_null($product)){
             return $this->SendError('Product not found');
         }
-
          $user_id=Auth::id();
-
         //search all products not ordered in user_bag
         $cart=User_bag::where('user_id',$user_id)->where('is_final_bag','new')->get();
 
@@ -68,15 +71,12 @@ class UserBagController extends BaseController
         } catch (\Throwable $th) {
             return $this->SendError('Error to add product to your bag',$th->getMessage());
         }
-
-
     }
-
-
+    //show product content
     public function showProductBag($id)
     {
         try {
-            $product=Product::findOrFail($id);
+            $product=Product::find($id);
             if(is_null($product))
                 return $this->sendError('product not founded');
             $product->Product_image;
@@ -86,8 +86,18 @@ class UserBagController extends BaseController
         }
     }
 
+    //update product
     public function updateBag(Request $request,$itemId)
     {
+        //validate data
+        $validateData=Validator::make($request->all(), [
+            'item_quantity'=>'required',
+            'color'=>'required',
+            'size'=>'required|in:S,M,L,XL,XXL',
+        ]);
+        if ($validateData->fails())
+                return $this->SendError(' Invalid data' ,$validateData->errors());
+
         $cartItem=User_bag::where('id',$itemId)->where('is_final_bag','new')->first();
 
         if ($cartItem) {
@@ -101,15 +111,12 @@ class UserBagController extends BaseController
                 return $this->SendError('cant\'t Update product in your bag',$th->getMessage());
             }
         }
-
     }
-
-
-    public function deleteProductBag(Request $request,$idProduct)
+    //delete product in the bag
+    public function deleteProductBag($idProduct)
     {
-
-        $cartItem=User_bag::findOrFail($idProduct);
-        if(!$cartItem)
+        $cartItem=User_bag::find($idProduct);
+        if(is_null($cartItem))
         return $this->sendError('product not founded in your bag');
         try {
             $cartItem->delete();
@@ -118,12 +125,11 @@ class UserBagController extends BaseController
             return $this->SendError('Error to delete product',$th->getMessage());
         }
 
-
     }
 
-    public function destroyBag(Request $request){
+    public function destroyBag(){
 
-        $user_id=auth('api')->user()->id;
+        $user_id=Auth::id();
         $cart=User_bag::where('user_id',$user_id)->where('is_final_bag','new')->get();
         try {
             foreach($cart as $item){

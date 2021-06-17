@@ -18,7 +18,7 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->dateTime('date_sent')->nullable();
             $table->dateTime('date_target')->nullable();
-            $table->boolean('hasCoupon');
+            $table->boolean('hasCoupon')->default(0);
             $table->string('couponDiscount')->nullable();
             $table->unsignedBigInteger('coupon_id');
             $table->boolean('money_payement')->default(0);

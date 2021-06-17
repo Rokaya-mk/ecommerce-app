@@ -56,6 +56,7 @@ Route::get('displayCoupons','API\CouponController@displayCoupons')->middleware('
 Route::post('storeNewCoupon','API\CouponController@storeNewCoupon')->middleware('auth:api');
 Route::put('updateCoupon/{id}','API\CouponController@updateCoupon')->middleware('auth:api');
 Route::delete('destroyCoupon/{id}','API\CouponController@destroyCoupon')->middleware('auth:api');
+Route::post('applyCoupon','API\CouponController@destroyCoupon')->middleware('auth:api');
 
 
 
@@ -69,6 +70,20 @@ Route::put('updateBag/{id}','API\UserBagController@updateBag');
 Route::delete('deleteProductBag/{id}','API\UserBagController@deleteProductBag');
 Route::delete('destroyBag','API\UserBagController@destroyBag');
 });
+
+//Order Routes
+Route::middleware('auth:api')->group( function (){
+
+    Route::post('makeOrder','API\OrderController@makeOrder');
+    Route::get('allOrders','API\OrderController@allOrders');
+    Route::get('getOpenedOrders','API\OrderController@getOpenedOrders');
+    Route::get('getClosedOrders','API\OrderController@getClosedOrders');
+    Route::post('ConfirmMoneyRecieve/{orderId}','API\OrderController@ConfirmMoneyRecieve');
+    Route::post('ConfirmDelivery/{orderId}','API\OrderController@ConfirmDelivery');
+    Route::get('myOrders','API\OrderController@myOrders');
+    Route::post('updateOrderDate/{orderId}','API\OrderController@updateOrderDate');
+    });
+
 
 Route::get('faq', 'API\FAQController@index');
 Route::post('addQuestion', 'API\FAQController@store')->middleware('auth:api');
