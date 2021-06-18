@@ -50,6 +50,17 @@ Route::post('getProductColorQuantityofCertainSize', 'API\ProductSizeColorQuantit
 Route::post('deleteColorofCertainSize', 'API\ProductSizeColorQuantityController@deleteColorofCertainSize')->middleware('auth:api');
 Route::post('updateColorQuantityofCertainSize', 'API\ProductSizeColorQuantityController@updateColorQuantityofCertainSize')->middleware('auth:api');
 
+//Category
+Route::post('categories', 'API\CategoryController@index');
+Route::post('category/{id}', 'API\CategoryController@show');
+Route::post('addCategory', 'API\CategoryController@store')->middleware('auth:api');
+Route::put('category/{id}', 'API\CategoryController@update')->middleware('auth:api');
+Route::post('deleteCategory', 'API\CategoryController@deleteCategory')->middleware('auth:api');
+
+//Product Category
+Route::post('showAllProductCategories/{id}', 'API\ProductCategoryController@showAllProductCategories');
+Route::post('addCategorytoProduct', 'API\ProductCategoryController@addCategorytoProduct')->middleware('auth:api');
+Route::post('removeProductfromCategory', 'API\ProductCategoryController@removeProductfromCategory')->middleware('auth:api');
 //Coupons Routes
 
 Route::get('displayCoupons','API\CouponController@displayCoupons')->middleware('auth:api');

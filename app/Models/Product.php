@@ -20,12 +20,15 @@ class Product extends Model
     {
     	return $this->hasMany('App\Models\Product_image');
     }
-
     public function Product_size()
     {
     	return $this->hasMany('App\Models\Product_size');
     }
     public function user_bags(){
         return $this->hasMany('App\Models\User_bag');
+    }
+    public function Product_category()
+    {
+    	return $this->hasMany('App\Models\Product_category');
     }
 }
