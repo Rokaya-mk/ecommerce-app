@@ -27,7 +27,10 @@ class UserBagController extends BaseController
         $images=Product_image::whereIn('product_id',$products->pluck('id'))->get();
 
         //return items with products
-        return $this->SendResponse([$items,$products,$images],'bag list retreived Sucessfully');
+        return $this->SendResponse([
+                                    'itemsBag' => $items,
+                                    'productsDetails' => $products,
+                                    'productsImages' => $images],'bag list retreived Sucessfully');
 
     }
 

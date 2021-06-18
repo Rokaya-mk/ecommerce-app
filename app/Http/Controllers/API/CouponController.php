@@ -54,6 +54,9 @@ class CouponController extends BaseController
                 $coupon->discount_type = $request->discount_type;
                 $coupon->discount_value = $request->discount_value;
                 $coupon->expired_date = Carbon::parse($request->expired_date)->format('Y-m-d H:i:s');
+                if($coupon->expired_date<=Carbon::now()){
+                    return $this->SendError('expired date should not be less than date now');
+                }
                 $coupon->save();
                 return $this->SendResponse($coupon, 'Coupon added Successfully!');
             } catch (\Throwable $th) {
@@ -115,7 +118,7 @@ class CouponController extends BaseController
         $coupon = Coupon::where('discount_code', $request->coupon)->first();
         if($coupon){
             $getDate=Carbon::now()->format('Y-m-d H:i:s');
-            if($coupon->expired_date<$getDate){
+            if($coupon->expired_date>=$getDate){
                 return $this->SendResponse([$coupon->discount_code,$coupon->discount_value,$coupon->discount_type],
                                             'Coupon applied Sucessfully');
             }else{
