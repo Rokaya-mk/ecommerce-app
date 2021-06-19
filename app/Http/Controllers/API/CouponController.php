@@ -70,6 +70,16 @@ class CouponController extends BaseController
     //Update Coupon
     public function updateCoupon(Request $request, $id)
     {
+        //validate data
+        $validateData=Validator::make($request->all(), [
+            'discount_code'=>'required',
+            'discount_type'=>'required',
+            'discount_value'=>'required',
+            'expired_date'=>'required|date',
+
+        ]);
+        if ($validateData->fails())
+                return $this->SendError(' Invalid data' ,$validateData->errors());
         $user=User::findorFail(Auth::id());
         if($user->is_Admin != 1){
             return $this->SendError('You do not have rights to update coupon');
@@ -115,6 +125,13 @@ class CouponController extends BaseController
 
     //upply coupon
     public function applyCoupon(Request $request){
+
+        $validateData=Validator::make($request->all(), [
+            'coupon'=>'required',
+        ]);
+        if ($validateData->fails())
+                return $this->SendError(' Invalid data' ,$validateData->errors());
+
         $coupon = Coupon::where('discount_code', $request->coupon)->first();
         if($coupon){
             $getDate=Carbon::now()->format('Y-m-d H:i:s');
