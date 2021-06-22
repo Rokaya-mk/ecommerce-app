@@ -67,7 +67,7 @@ Route::get('displayCoupons','API\CouponController@displayCoupons')->middleware('
 Route::post('storeNewCoupon','API\CouponController@storeNewCoupon')->middleware('auth:api');
 Route::put('updateCoupon/{id}','API\CouponController@updateCoupon')->middleware('auth:api');
 Route::delete('destroyCoupon/{id}','API\CouponController@destroyCoupon')->middleware('auth:api');
-Route::post('applyCoupon','API\CouponController@applyCoupon')->middleware('auth:api');
+Route::post('applyCoupon','API\CouponController@applyCoupon');
 
 
 
