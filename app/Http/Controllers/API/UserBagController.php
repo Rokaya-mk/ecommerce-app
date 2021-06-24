@@ -34,6 +34,44 @@ class UserBagController extends BaseController
             return $this->SendError('Error',$th->getMessage());
         }
     }
+    //calculate total price
+    public function getTotalBagPrice(Request $request){
+        try {
+            $user=User::find(Auth::id());
+            if($user->is_Admin!=0){
+                return $this->sendError('You do not have rights to access ');
+            }else{
+                $validateData=Validator::make($request->all(), [
+                    'coupon_code'=> 'nullable|string'
+            ]);
+            if ($validateData->fails())
+                    return $this->SendError(' Invalid data' ,$validateData->errors());
+
+                $userBag=User_bag::where('user_id',$user->id)->where('is_final_bag','new')->get();
+                if($userBag->isEmpty())
+                    return $this->sendError('your bag is empty');
+                 //calculate total amount in bag
+                $totalPrice=0;
+                foreach($userBag as $item){
+                    $totalPrice+=($item->item_quantity)*($item->product_price);
+                }
+                //if order has coupon
+                if($request->has('coupon_code')){
+                    //get coupon discount
+                    $coupon = Coupon::where('discount_code', $request->coupon_code)->first();
+                    //dd($coupon);
+                    if($coupon->discount_type=='PERCENTAGE'){
+                        $totalPrice = $totalPrice - (($coupon->discount_value / 100) * $totalPrice);
+                    }else if($coupon->discount_type=='Fix'){
+                        $totalPrice = $totalPrice - ($coupon->discount_value) ;
+                    }
+                }
+                return $this->SendResponse(['totalPrice'=>$totalPrice],'total Price calculated Sucessfully');
+            }
+        } catch (\Throwable $th) {
+            return $this->SendError('Error',$th->getMessage());
+        }
+    }
 
     //add product to my bag
     public function addTobag(Request $request,$id){
@@ -59,8 +97,7 @@ class UserBagController extends BaseController
             $cart=User_bag::where('user_id',$user->id)->where('is_final_bag','new')->get();
 
             foreach($cart as $item){
-
-                if($item->product_id==$id)
+                if(($item->product_id == $id) && ($item->color == $request->color) && ($item->size == $request->size))
                 return $this->SendError('Product already exist in your bag');
             }
             //verify that size exist in database
@@ -77,20 +114,32 @@ class UserBagController extends BaseController
             if(is_null($productColor)){
                 return $this->SendError('the Product not available in '.$request->color. ' color');
             }
+            //if product quantity less than item quantity update quantity ==> make $quantityUpdated=true
+            $quantityUpdated=false;
             //verify quantity
-            if($productColor->quantity < $request->item_quantity){
-                return $this->SendError('th Product not available in this quantity');
+            if($productColor->quantity<=0){
+                return $this->SendError('This Product not available');
             }
             $newItem = new User_bag();
             $newItem->user_id=$user->id;
             $newItem->product_id=$id;
-            $newItem->item_quantity=$request->item_quantity;
+            //update quantity
+            if( $productColor->quantity < $request->item_quantity){
+                $newItem->item_quantity=$productColor->quantity;
+                $quantityUpdated=true;
+            }else{
+                $newItem->item_quantity=$request->item_quantity;
+            }
             $newItem->color=$request->color;
             $newItem->size=$request->size;
             $newItem->product_price=$product->price;
             $newItem->is_final_bag='new';
             $newItem->save();
-            return $this->SendResponse($newItem,'Product added to Bag Sucessfully');
+            if($quantityUpdated==true){
+                return $this->SendResponse($newItem,'Product added to the bag ,with modification on product quantity by available quantity');
+            }else{
+                return $this->SendResponse($newItem,'Product added to Bag Sucessfully');
+                }
             }
         } catch (\Throwable $th) {
             return $this->SendError('Error',$th->getMessage());
@@ -155,10 +204,12 @@ class UserBagController extends BaseController
             if($user->is_Admin!=0){
                 return $this->sendError('You do not have rights to access ');
             }else{
-                $cartItem=User_bag::find($idProduct);
+                $cartItem=User_bag::where('user_id',$user->id)
+                                    ->where('product_id',$idProduct)
+                                    ->where('is_final_bag','new');
         if(is_null($cartItem))
             return $this->sendError('product not founded in your bag');
-        $cartItem->delete();
+            $cartItem->delete();
         return $this->SendResponse($cartItem, 'product deleted successfully');
             }
         } catch (\Throwable $th) {
@@ -183,41 +234,5 @@ class UserBagController extends BaseController
         }
     }
 
-    public function getTotalBagPrice(Request $request){
-        try {
-            $user=User::find(Auth::id());
-            if($user->is_Admin!=0){
-                return $this->sendError('You do not have rights to access ');
-            }else{
-                $validateData=Validator::make($request->all(), [
-                    'coupon_code'=> 'nullable|string'
-            ]);
-            if ($validateData->fails())
-                    return $this->SendError(' Invalid data' ,$validateData->errors());
 
-                $userBag=User_bag::where('user_id',$user->id)->where('is_final_bag','new')->get();
-                if($userBag->isEmpty())
-                    return $this->sendError('your bag is empty');
-                 //calculate total amount in bag
-                $totalPrice=0;
-                foreach($userBag as $item){
-                    $totalPrice+=($item->item_quantity)*($item->product_price);
-                }
-                //if order has coupon
-                if($request->has('coupon_code')){
-                    //get coupon discount
-                    $coupon = Coupon::where('discount_code', $request->coupon_code)->first();
-                    //dd($coupon);
-                    if($coupon->discount_type=='PERCENTAGE'){
-                        $totalPrice = $totalPrice - (($coupon->discount_value / 100) * $totalPrice);
-                    }else if($coupon->discount_type=='Fix'){
-                        $totalPrice = $totalPrice - ($coupon->discount_value) ;
-                    }
-                }
-                return $this->SendResponse(['totalPrice'=>$totalPrice],'total Price calculated Sucessfully');
-            }
-        } catch (\Throwable $th) {
-            return $this->SendError('Error',$th->getMessage());
-        }
-    }
 }

@@ -89,10 +89,9 @@ Route::middleware('auth:api')->group( function (){
     Route::get('allOrders','API\OrderController@allOrders');
     Route::get('getOpenedOrders','API\OrderController@getOpenedOrders');
     Route::get('getClosedOrders','API\OrderController@getClosedOrders');
-    Route::post('ConfirmMoneyRecieve/{orderId}','API\OrderController@ConfirmMoneyRecieve');
-    Route::post('ConfirmDelivery/{orderId}','API\OrderController@ConfirmDelivery');
+    Route::post('confirmSend/{orderId}','API\OrderController@confirmSend');
     Route::get('myOrders','API\OrderController@myOrders');
-    Route::post('updateOrderDate/{orderId}','API\OrderController@updateOrderDate');
+
     });
 
 
