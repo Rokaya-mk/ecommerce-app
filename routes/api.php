@@ -76,10 +76,10 @@ Route::middleware('auth:api')->group( function (){
 
 Route::get('myBag','API\UserBagController@myBag');
 Route::post('addTobag/{id}','API\UserBagController@addTobag');
-Route::get('showProductBag/{id}','API\UserBagController@showProductBag');
 Route::put('updateBag/{id}','API\UserBagController@updateBag');
 Route::delete('deleteProductBag/{id}','API\UserBagController@deleteProductBag');
 Route::delete('destroyBag','API\UserBagController@destroyBag');
+Route::get('totalPrice','API\UserBagController@getTotalBagPrice');
 });
 
 //Order Routes
