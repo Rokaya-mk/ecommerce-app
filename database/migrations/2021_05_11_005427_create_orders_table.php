@@ -20,11 +20,11 @@ class CreateOrdersTable extends Migration
             $table->dateTime('date_target')->nullable();
             $table->boolean('hasCoupon')->default(0);
             $table->string('couponDiscount')->nullable();
-            $table->unsignedBigInteger('coupon_id');
+            $table->unsignedBigInteger('coupon_id')->nullable();
             $table->boolean('money_payement')->default(0);
             $table->boolean('is_order_sent')->default(0);
-            $table->foreign('user_id')->references('id')->on('users') ->onDelete('cascade');
-            $table->foreign('coupon_id')->references('id')->on('coupons') ->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('coupon_id')->references('id')->on('coupons')->onDelete('cascade');
             $table->timestamps();
         });
     }
