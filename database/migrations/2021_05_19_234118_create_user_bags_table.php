@@ -21,6 +21,7 @@ class CreateUserBagsTable extends Migration
             $table->integer('item_quantity');
             $table->string('color');
             $table->string('size');
+            $table->double('product_price');
             $table->string('is_final_bag');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');

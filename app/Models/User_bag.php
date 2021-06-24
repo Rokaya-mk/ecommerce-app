@@ -16,6 +16,7 @@ class User_bag extends Model
         'item_quantity',
         'color',
         'size',
+        'product_price',
         'is_final_bag'
     ];
     public function user()
