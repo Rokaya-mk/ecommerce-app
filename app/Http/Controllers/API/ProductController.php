@@ -24,6 +24,43 @@ class ProductController extends BaseController
         }
     }
 
+    public function showProductsforUsers()
+    {
+        try {
+            $user=User::find(Auth::id());
+            if($user->is_Admin !=0){
+                return $this->sendError('You do not have rights to access');
+            }
+            else
+             {
+                $favoraiteproducts=DB::table('products')
+                ->whereIn('id', function($query){
+                    $query->select('product_id')
+                    ->from('favoraite_products')
+                    ->whereNull('products.deleted_at')
+                    ->where('favoraite_products.user_id', Auth::id());
+                })
+                ->select(DB::raw('products.*, "1" AS inFavoriate') )
+                ->get();
+
+
+                $notFavoraiteproducts=DB::table('products')
+                ->whereNotIn('id', function($query){
+                    $query->select('product_id')
+                    ->from('favoraite_products')
+                    ->where('favoraite_products.user_id', Auth::id());
+                })
+                ->select(DB::raw('products.*, "0" AS inFavoriate'))
+                ->whereNull('products.deleted_at')
+                ->get();
+                $allProducts =$favoraiteproducts->merge($notFavoraiteproducts)->sortBy('id');
+                return $this->SendResponse($allProducts,'Products is retrieved Successfully!');
+            }
+        } catch (\Throwable $th) {
+            return $this->SendError('Error',$th->getMessage());
+        }
+    }
+
     public function show($id)
     {
         try
@@ -101,21 +138,36 @@ class ProductController extends BaseController
         }
     }
 
-    public function deleteProduct(Request $request)
+    // public function deleteProduct($id)
+    // {
+    //     try
+    //     {
+    //         $userId=Auth::id();
+    //         $user=User::find($userId);
+    //         if($user->is_Admin == 1)
+    //         {
+    //             $product=Product::find($id);
+    //             if(is_null($product))
+    //                 return $this->SendError('Product is not found');
+    //             $product->delete();
+    //             return $this->SendResponse($product, 'Product is deleted Successfully!');
+    //         }
+    //         else
+    //             return $this->SendError('You do not have rights to delete this product');
+    //     } catch (\Throwable $th) {
+    //         return $this->SendError('Error',$th->getMessage());
+    //     }
+    // }
+
+    public function softDeleteProduct($id)
     {
         try
         {
-            $input = $request->all();
-            $validator = Validator::make($input , [
-            'product_id'=>'required'
-            ]);
-            if ($validator->fails())
-                return $this->SendError('Please validate error' ,$validator->errors());
             $userId=Auth::id();
             $user=User::find($userId);
             if($user->is_Admin == 1)
             {
-                $product=Product::find($request->product_id);
+                $product=Product::find($id);
                 if(is_null($product))
                     return $this->SendError('Product is not found');
                 $product->delete();

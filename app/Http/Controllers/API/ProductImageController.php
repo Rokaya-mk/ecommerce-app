@@ -53,8 +53,8 @@ class ProductImageController extends BaseController
         try
         {
             $product=Product::find($id);
-            if(is_null($product))
-                return $this->SendError('Product is not found');
+            // if(is_null($product))
+            //     return $this->SendError('Product is not found');
             $productImagesUrls=Product_image::where('product_id',$id)->get();
             if($productImagesUrls->count()==0)
                 return $this->SendError('This product does not have images');

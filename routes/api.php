@@ -30,11 +30,14 @@ Route::put('update', 'API\AuthController@updateUserInformation')->middleware('au
 Route::post('verify', 'API\AuthController@emailVerify');
 Route::post('resend', 'API\AuthController@resendCode');
 
+//products
 Route::post('products', 'API\ProductController@index');
+Route::post('showProductsforUsers', 'API\ProductController@showProductsforUsers')->middleware('auth:api');
 Route::post('product/{id}', 'API\ProductController@show');
 Route::post('addProduct', 'API\ProductController@store')->middleware('auth:api');
 Route::put('product/{id}', 'API\ProductController@update')->middleware('auth:api');
-Route::post('deleteProduct', 'API\ProductController@deleteProduct')->middleware('auth:api');
+// Route::post('deleteProduct/{id}', 'API\ProductController@deleteProduct')->middleware('auth:api');
+Route::post('softDeleteProduct/{id}', 'API\ProductController@softDeleteProduct')->middleware('auth:api');
 Route::post('searchForProduct', 'API\ProductController@searchForProduct');
 
 Route::post('addImage', 'API\ProductImageController@addImage')->middleware('auth:api');
@@ -49,6 +52,11 @@ Route::post('addColorQuantityforCertainSize', 'API\ProductSizeColorQuantityContr
 Route::post('getProductColorQuantityofCertainSize', 'API\ProductSizeColorQuantityController@getProductColorQuantityofCertainSize');
 Route::post('deleteColorofCertainSize', 'API\ProductSizeColorQuantityController@deleteColorofCertainSize')->middleware('auth:api');
 Route::post('updateColorQuantityofCertainSize', 'API\ProductSizeColorQuantityController@updateColorQuantityofCertainSize')->middleware('auth:api');
+
+//favoraite products
+Route::post('myFavoraiteProducts', 'API\FavoraiteProductsController@myFavoraiteProducts')->middleware('auth:api');
+Route::post('addProducttoFavoriate', 'API\FavoraiteProductsController@addProducttoFavoriate')->middleware('auth:api');
+Route::post('removeProductfromFavoriate', 'API\FavoraiteProductsController@removeProductfromFavoriate')->middleware('auth:api');
 
 //Category
 Route::post('categories', 'API\CategoryController@index');

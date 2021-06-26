@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
     use HasFactory;
+    use SoftDeletes;
     protected $fillable = [
         'name_en',
         'name_ar',
@@ -15,6 +17,7 @@ class Product extends Model
         'description_ar',
         'price',
     ];
+    protected $dates = ['deleleted_at'];
 
     public function Product_image()
     {

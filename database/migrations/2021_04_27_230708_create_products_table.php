@@ -21,6 +21,7 @@ class CreateProductsTable extends Migration
             $table->longText('description_ar');
             $table->double('price');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
