@@ -118,3 +118,4 @@ Route::post('add/review', 'API\ReviewController@addReview')->middleware('auth:ap
 Route::put('edit/review/{id}', 'API\ReviewController@editReview')->middleware('auth:api');
 Route::delete('delete/review/{id}', 'API\ReviewController@deleteReview')->middleware('auth:api');
 
+Route::post('sendEmail', 'API\SendEmailController@sendEmailForAllUsers')->middleware('auth:api');
