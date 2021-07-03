@@ -22,8 +22,8 @@ class SendEmailController extends BaseController
                 return $this->SendError('Validate error', $validate->errors());
             }
             // Check the user permission
-            $user = Auth::user();
-            if ($user->is_Admin != 1) {
+            $admin = Auth::user();
+            if ($admin->is_Admin != 1) {
                 return $this->sendError('You do not have permission to access this.');
             }
             // Get all verified users email
@@ -38,6 +38,39 @@ class SendEmailController extends BaseController
                 });
             }
             return $this->SendResponse('Email sent successfully', 200);
+        } catch (\Throwable $th) {
+            return $this->sendError('Something went wrong', $th->getMessage());
+        }
+    }
+
+    public function sendEmailForSpecificUsers(Request $request){
+	    try {
+            $validate = Validator::make($request->all(), [
+                    'email' => 'required',
+                    'subject' => 'required',
+                    'message' => 'required'
+                ]);
+                $admin = Auth::user();
+                if($admin->is_Admin != 1){
+                    return $this->sendError('You do not have permission to send emails');
+                }
+                if($validate->fails()){
+                    return $this->sendError('Validate Error', $validate->errors());
+                }
+                $sub = $request['subject'];
+                $topic = $request['message'];
+                //$users = User::where('email', $request['email'])->where('is_verify', 1)->get();
+                foreach ($request['email'] as $user) {
+                    $userCheck = User::where('email', $user)->get();
+                    if ($userCheck->contains('is_verify', 1)) {
+                        Mail::send('Mails.sendEmail', ['topic' => $topic], function ($message) use ($user, $sub) {
+                            $message->cc($user);
+                            $message->subject($sub);
+                        });
+                    }
+
+                }
+            return $this->SendResponse("done", 200);
         } catch (\Throwable $th) {
             return $this->sendError('Something went wrong', $th->getMessage());
         }

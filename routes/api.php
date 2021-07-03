@@ -119,3 +119,4 @@ Route::put('edit/review/{id}', 'API\ReviewController@editReview')->middleware('a
 Route::delete('delete/review/{id}', 'API\ReviewController@deleteReview')->middleware('auth:api');
 
 Route::post('sendEmail', 'API\SendEmailController@sendEmailForAllUsers')->middleware('auth:api');
+Route::post('send/Email/for/users', 'API\SendEmailController@sendEmailForSpecificUsers')->middleware('auth:api');
