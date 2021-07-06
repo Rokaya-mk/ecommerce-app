@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Coupon;
+use App\Models\Offer;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Product;
@@ -90,7 +91,14 @@ class OrderController extends BaseController
             foreach($products_bag as $item){
                 //get product in product table
                 $product_item=Product::find($item->product_id);
-                $orderTotal+=($item->item_quantity)*($product_item->price);
+                //verify if product is offered
+                $productOffered=Offer::where('product_id',$item->product_id)->first();
+                if(!is_null($productOffered)){
+                    $orderTotal+=($item->item_quantity)*($productOffered->offer_product_price);
+                }else{
+                    $orderTotal+=($item->item_quantity)*($product_item->price);
+                }
+                //$orderTotal+=($item->item_quantity)*($product_item->price);
             }
             //if order has coupon
 
@@ -126,10 +134,18 @@ class OrderController extends BaseController
             foreach($products_bag as $item){
                 $item->is_final_bag="old";
                 $product_item=Product::find($item->product_id);
+
                 //store order id
                 $item->order_id=$order->id;
-                //store product price in user bag
+                //store price of product (witout offer)
                 $item->product_price=$product_item->price;
+                //verify if product has offer
+                $productOffered=Offer::where('product_id',$item->product_id)->first();
+                if(!is_null($productOffered)){
+                    $item->price_after_offer=$productOffered->offer_product_price;
+                    $item->has_offer=1;
+                }
+
                 $size=Product_size::where('product_id',$product_item->id)->where('size',$item->size)->first();
                 $productQuantityItem=Product_size_color_quantity::where('product_id',$product_item->id)
                                             ->where('size_id',$size->id)
