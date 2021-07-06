@@ -125,3 +125,26 @@ Route::delete('delete/review/{id}', 'API\ReviewController@deleteReview')->middle
 
 Route::post('sendEmail', 'API\SendEmailController@sendEmailForAllUsers')->middleware('auth:api');
 Route::post('send/Email/for/users', 'API\SendEmailController@sendEmailForSpecificUsers')->middleware('auth:api');
+
+//push notification Routes
+Route::middleware('auth:api')->group( function (){
+    //send notification
+Route::post('push-notification', 'API\PushNotificationController@sendPushNotification');
+//store token
+Route::post('save-token', 'API\PushNotificationController@saveToken');
+//show all notification for one user
+Route::get('display-notifications', 'API\PushNotificationController@displayNotifications');
+//show notification content
+Route::get('show-notification/{id}', 'API\PushNotificationController@showNotification');
+//close receiving notifications
+Route::post('close-notification', 'API\PushNotificationController@closeNotification');
+//allow receive notifiations
+Route::post('open-notification', 'API\PushNotificationController@openNotification');
+//mark notification as read
+Route::put('mark-asRead/{id}', 'API\PushNotificationController@markasread');
+//delete notification for user
+Route::delete('delete-notification/{id}', 'API\PushNotificationController@deleteNotification');
+//delete all notifications for user
+Route::delete('clear-notifications', 'API\PushNotificationController@clearNotifications');
+
+});
