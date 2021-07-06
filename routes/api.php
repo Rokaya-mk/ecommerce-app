@@ -101,7 +101,12 @@ Route::middleware('auth:api')->group( function (){
     Route::get('myOrders','API\OrderController@myOrders');
 
     });
-
+//Offer Routes
+Route::get('offers','API\OfferController@offers');
+Route::post('addNewOffer/{productId}','API\OfferController@addNewOffer')->middleware('auth:api');
+Route::put('updateOffer/{idOffer}','API\OfferController@updateOffer')->middleware('auth:api');
+Route::delete('destroyOffer/{idOffer}','API\OfferController@destroyOffer')->middleware('auth:api');
+Route::get('productsOffers','API\OfferController@productsOffers');
 
 Route::get('faq', 'API\FAQController@index');
 Route::post('addQuestion', 'API\FAQController@store')->middleware('auth:api');

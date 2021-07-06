@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Coupon;
+use App\Models\Offer;
 use App\Models\Product;
 use App\Models\Product_image;
 use App\Models\Product_size;
@@ -57,7 +58,15 @@ class UserBagController extends BaseController
                 $totalPrice=0;
                 foreach($userBag as $item){
                     $product_item=Product::find($item->product_id);
-                    $totalPrice+=($item->item_quantity)*($product_item->price);
+                    //verify if product is offered
+                    $productOffered=Offer::where('product_id',$item->product_id)->first();
+                   // dd($productOffered->offer_product_price);
+                    if(!is_null($productOffered)){
+                        $totalPrice+=($item->item_quantity)*($productOffered->offer_product_price);
+                    }else{
+                        $totalPrice+=($item->item_quantity)*($product_item->price);
+                    }
+
                 }
                 //if order has coupon
                 if($request->has('coupon_code')){
