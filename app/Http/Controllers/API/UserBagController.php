@@ -68,6 +68,7 @@ class UserBagController extends BaseController
                     }
 
                 }
+
                 //if order has coupon
                 if($request->has('coupon_code')){
                     //get coupon discount
