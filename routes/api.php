@@ -38,7 +38,11 @@ Route::post('addProduct', 'API\ProductController@store')->middleware('auth:api')
 Route::put('product/{id}', 'API\ProductController@update')->middleware('auth:api');
 // Route::post('deleteProduct/{id}', 'API\ProductController@deleteProduct')->middleware('auth:api');
 Route::post('softDeleteProduct/{id}', 'API\ProductController@softDeleteProduct')->middleware('auth:api');
+Route::post('showDeletedProducts', 'API\ProductController@showDeletedProducts')->middleware('auth:api');
+Route::post('restoreDeletedProduct/{id}', 'API\ProductController@restoreDeletedProduct')->middleware('auth:api');
 Route::post('searchForProduct', 'API\ProductController@searchForProduct');
+Route::post('searchForDeletedProduct', 'API\ProductController@searchForDeletedProduct')->middleware('auth:api');
+
 
 Route::post('addImage', 'API\ProductImageController@addImage')->middleware('auth:api');
 Route::post('getProductImagesUrls/{id}', 'API\ProductImageController@getProductImagesUrls');
@@ -77,8 +81,6 @@ Route::put('updateCoupon/{id}','API\CouponController@updateCoupon')->middleware(
 Route::delete('destroyCoupon/{id}','API\CouponController@destroyCoupon')->middleware('auth:api');
 Route::post('applyCoupon','API\CouponController@applyCoupon');
 
-
-
 //UserBag
 Route::middleware('auth:api')->group( function (){
 
@@ -100,7 +102,8 @@ Route::middleware('auth:api')->group( function (){
     Route::post('confirmSend/{orderId}','API\OrderController@confirmSend');
     Route::get('myOrders','API\OrderController@myOrders');
 
-    });
+});
+
 //Offer Routes
 Route::get('offers','API\OfferController@offers');
 Route::post('addNewOffer/{productId}','API\OfferController@addNewOffer')->middleware('auth:api');
