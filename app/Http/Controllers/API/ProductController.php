@@ -179,7 +179,42 @@ class ProductController extends BaseController
             return $this->SendError('Error',$th->getMessage());
         }
     }
-
+    public function showDeletedProducts() {
+        try {
+            $user=User::find(Auth::id());
+            if($user->is_Admin !=1){
+                return $this->sendError('You do not have rights to access');
+            }
+            else
+             {
+                $deletedProducts= Product::onlyTrashed()->get();
+                return $this->SendResponse($deletedProducts,'Deleted products is retrieved Successfully!');
+            }
+        } catch (\Throwable $th) {
+            return $this->SendError('Error',$th->getMessage());
+        }
+    }
+    public function restoreDeletedProduct($id) {
+        try {
+            $user=User::find(Auth::id());
+            if($user->is_Admin !=1){
+                return $this->sendError('You do not have rights to access');
+            }
+            else
+            {
+                $deletedProduct= Product::onlyTrashed()->where('id', $id)->first();
+                if(is_null($deletedProduct))
+                    return $this->SendError('Product is not found');
+                else
+                {
+                    $deletedProduct->restore();
+                    return $this->SendResponse($deletedProduct,'Deleted products is restored Successfully!');
+                }
+            }
+        } catch (\Throwable $th) {
+            return $this->SendError('Error',$th->getMessage());
+        }
+    }
     public function searchForProduct(Request $request)
     {
         try
@@ -192,7 +227,9 @@ class ProductController extends BaseController
                 return $this->SendError('Validate Error',$validator->errors());
             $products = DB::table('products')
             ->where('name_en', 'like', '%' . $input['name'] . '%')
-            ->orWhere('name_ar', 'like', '%' . $input['name'] . '%')->get();
+            ->whereNull ('deleted_at')
+            ->orWhere('name_ar', 'like', '%' . $input['name'] . '%')
+            ->whereNull ('deleted_at')->get();
             if($products->count()==0)
                 return $this->SendError('Product is not foundو Search using another keyword');
             return $this->SendResponse($products, 'Product is retrieved Successfully!');
@@ -200,4 +237,28 @@ class ProductController extends BaseController
             return $this->SendError('Error',$th->getMessage());
         }
     }
+    public function searchForDeletedProduct(Request $request)
+    {
+        try
+        {
+            $input=$request->all();
+            $validator = Validator::make($input,[
+            'name'=>'required'
+            ]);
+            if( $validator->fails())
+                return $this->SendError('Validate Error',$validator->errors());
+            $products = Product::onlyTrashed()->get();
+            $products = DB::table('products')
+            ->where('name_en', 'like', '%' . $input['name'] . '%')
+            ->whereNotNull ('deleted_at')
+            ->orWhere('name_ar', 'like', '%' . $input['name'] . '%')
+            ->whereNotNull ('deleted_at')->get();
+            if($products->count()==0)
+                return $this->SendError('Product is not foundو Search using another keyword');
+            return $this->SendResponse($products, 'Product is retrieved Successfully!');
+        } catch (\Throwable $th) {
+            return $this->SendError('Error',$th->getMessage());
+        }
+    }
+
 }
