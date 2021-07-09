@@ -38,7 +38,11 @@ Route::post('addProduct', 'API\ProductController@store')->middleware('auth:api')
 Route::put('product/{id}', 'API\ProductController@update')->middleware('auth:api');
 // Route::post('deleteProduct/{id}', 'API\ProductController@deleteProduct')->middleware('auth:api');
 Route::post('softDeleteProduct/{id}', 'API\ProductController@softDeleteProduct')->middleware('auth:api');
+Route::post('showDeletedProducts', 'API\ProductController@showDeletedProducts')->middleware('auth:api');
+Route::post('restoreDeletedProduct/{id}', 'API\ProductController@restoreDeletedProduct')->middleware('auth:api');
 Route::post('searchForProduct', 'API\ProductController@searchForProduct');
+Route::post('searchForDeletedProduct', 'API\ProductController@searchForDeletedProduct')->middleware('auth:api');
+
 
 Route::post('addImage', 'API\ProductImageController@addImage')->middleware('auth:api');
 Route::post('getProductImagesUrls/{id}', 'API\ProductImageController@getProductImagesUrls');
@@ -77,8 +81,6 @@ Route::put('updateCoupon/{id}','API\CouponController@updateCoupon')->middleware(
 Route::delete('destroyCoupon/{id}','API\CouponController@destroyCoupon')->middleware('auth:api');
 Route::post('applyCoupon','API\CouponController@applyCoupon');
 
-
-
 //UserBag
 Route::middleware('auth:api')->group( function (){
 
@@ -100,8 +102,14 @@ Route::middleware('auth:api')->group( function (){
     Route::post('confirmSend/{orderId}','API\OrderController@confirmSend');
     Route::get('myOrders','API\OrderController@myOrders');
 
-    });
+});
 
+//Offer Routes
+Route::get('offers','API\OfferController@offers');
+Route::post('addNewOffer/{productId}','API\OfferController@addNewOffer')->middleware('auth:api');
+Route::put('updateOffer/{idOffer}','API\OfferController@updateOffer')->middleware('auth:api');
+Route::delete('destroyOffer/{idOffer}','API\OfferController@destroyOffer')->middleware('auth:api');
+Route::get('productsOffers','API\OfferController@productsOffers');
 
 Route::get('faq', 'API\FAQController@index');
 Route::post('addQuestion', 'API\FAQController@store')->middleware('auth:api');
@@ -121,3 +129,26 @@ Route::delete('delete/review/{id}', 'API\ReviewController@deleteReview')->middle
 Route::post('sendEmail', 'API\SendEmailController@sendEmailForAllUsers')->middleware('auth:api');
 Route::post('send/Email/for/users', 'API\SendEmailController@sendEmailForSpecificUsers')->middleware('auth:api');
 Route::post('change/email/option/{id}', 'API\SendEmailController@changeAcceptEmailOption')->middleware('auth:api');
+
+//push notification Routes
+Route::middleware('auth:api')->group( function (){
+    //send notification
+Route::post('push-notification', 'API\PushNotificationController@sendPushNotification');
+//store token
+Route::post('save-token', 'API\PushNotificationController@saveToken');
+//show all notification for one user
+Route::get('display-notifications', 'API\PushNotificationController@displayNotifications');
+//show notification content
+Route::get('show-notification/{id}', 'API\PushNotificationController@showNotification');
+//close receiving notifications
+Route::post('close-notification', 'API\PushNotificationController@closeNotification');
+//allow receive notifiations
+Route::post('open-notification', 'API\PushNotificationController@openNotification');
+//mark notification as read
+Route::put('mark-asRead/{id}', 'API\PushNotificationController@markasread');
+//delete notification for user
+Route::delete('delete-notification/{id}', 'API\PushNotificationController@deleteNotification');
+//delete all notifications for user
+Route::delete('clear-notifications', 'API\PushNotificationController@clearNotifications');
+
+});

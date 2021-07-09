@@ -17,7 +17,8 @@ class User_bag extends Model
         'color',
         'size',
         'product_price',
-        'is_final_bag'
+        'has_offer',
+        'price_after_offer'
     ];
     public function user()
     {

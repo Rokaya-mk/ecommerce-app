@@ -47,4 +47,8 @@ class User extends Authenticatable implements MustVerifyEmail
     public function order(){
         return $this->belongsTo('App\Models\Order');
     }
+
+    public function notifications(){
+        return $this->belongsToMany('App\Models\Notification');
+    }
 }

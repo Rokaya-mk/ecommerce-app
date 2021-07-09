@@ -34,4 +34,7 @@ class Product extends Model
     {
     	return $this->hasMany('App\Models\Product_category');
     }
+    public function offer(){
+        return $this->hasOne(Offer::class);
+    }
 }

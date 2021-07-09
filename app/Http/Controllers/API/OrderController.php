@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Coupon;
+use App\Models\Offer;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Product;
@@ -14,6 +15,7 @@ use App\Models\User_bag;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class OrderController extends BaseController
@@ -28,24 +30,32 @@ class OrderController extends BaseController
             }else{
                  //get products in user_bag for user
             $products_bag=User_bag::where('user_id',$user->id)->where('is_final_bag','new')->get();
+            //dd($products_bag);
             if(is_null($products_bag))
                 return $this->SendError('you don\'t have any products to order in your bag,try to add some!');
             //delete products that's not available
+            $itemsDeleted=[];
+            $itemsUpdated=[];
             foreach($products_bag as $item){
-                 $product_item=Product::find($item->product_id);
-            //     if(is_null($product_item)){
-            //         return $this->SendError('this product not founded');
-            //     }else{
+
+                 $product_item=Product::onlyTrashed()->find($item->product_id);
+
+
+                if(!is_null(( $product_item))){
+                    $item->delete();
+                    array_push($itemsDeleted,$item);
+                    //dd($itemsDeleted);
+                }
                     //get size from Product_size table
-                    $size=Product_size::where('product_id',$product_item->id)->where('size',$item->size)->first();
-                    $productQuantityItem=Product_size_color_quantity::where('product_id',$product_item->id)
+                    $size=Product_size::where('product_id',$item->product_id)->where('size',$item->size)->first();
+                    $productQuantityItem=Product_size_color_quantity::where('product_id',$item->product_id)
                                                                       ->where('size_id',$size->id)
                                                                       ->where('color',$item->color)->first();
                     //$quantityItem=Product_size_color_quantity::find($productQuantityItem->id);
-                    $itemsDeleted=[];
-                    $itemsUpdated=[];
+                    //dd($productQuantityItem);
+
                     //if product  quantity is null
-                    if(($productQuantityItem->quantity) <= 0){
+                    if(($productQuantityItem->quantity) == 0){
                         //push item into $itemsDeleted
                             $item->delete();
                             array_push($itemsDeleted,$item);
@@ -55,6 +65,7 @@ class OrderController extends BaseController
                             array_push($itemsUpdated,$item);
                     }
                 }
+
                 if((!empty($itemsDeleted)) || (!empty($itemsUpdated))){
                     return $this->SendError([
                         'updatedItems' => $itemsUpdated,
@@ -80,12 +91,20 @@ class OrderController extends BaseController
             foreach($products_bag as $item){
                 //get product in product table
                 $product_item=Product::find($item->product_id);
-                $orderTotal+=($item->item_quantity)*($product_item->price);
+                //verify if product is offered
+                $productOffered=Offer::where('product_id',$item->product_id)->first();
+                if(!is_null($productOffered)){
+                    $orderTotal+=($item->item_quantity)*($productOffered->offer_product_price);
+                }else{
+                    $orderTotal+=($item->item_quantity)*($product_item->price);
+                }
+                //$orderTotal+=($item->item_quantity)*($product_item->price);
             }
             //if order has coupon
-            if($request->has('coupon')){
+
+            if($request->has('coupon_code')){
                 //get coupon discount
-                $coupon = Coupon::where('discount_code', $request->coupon)->first();
+                $coupon = Coupon::where(DB::raw("BINARY `discount_code`"),$request->coupon_code)->first();
                 //dd($coupon);
                 if($coupon->discount_type=='PERCENTAGE'){
                     $orderTotal = $orderTotal - (($coupon->discount_value / 100) * $orderTotal);
@@ -98,22 +117,35 @@ class OrderController extends BaseController
             }
 
             $order->save();
-            if($request->has('payment_method')){
+            // if($request->has('payment_method')){
 
-                $payment=new Payment();
-                $payment->user_id=$user->id;
-                $payment->order_id=$order->id;
-                $payment->payment_method=$request->payment_method;
-                $payment->amount_paid=$orderTotal;
-                $payment->save();
-            }
+            //     $payment=new Payment();
+            //     $payment->user_id=$user->id;
+            //     $payment->order_id=$order->id;
+            //     $payment->payment_method=$request->payment_method;
+            //     $payment->amount_paid=$orderTotal;
+            //     $payment->save();
+            // }
             // else{
             //     return $this->SendError('you must specify payment method');
             // }
             //update quantity for products
+            $productsOrdered=[];
             foreach($products_bag as $item){
                 $item->is_final_bag="old";
                 $product_item=Product::find($item->product_id);
+
+                //store order id
+                $item->order_id=$order->id;
+                //store price of product (witout offer)
+                $item->product_price=$product_item->price;
+                //verify if product has offer
+                $productOffered=Offer::where('product_id',$item->product_id)->first();
+                if(!is_null($productOffered)){
+                    $item->price_after_offer=$productOffered->offer_product_price;
+                    $item->has_offer=1;
+                }
+
                 $size=Product_size::where('product_id',$product_item->id)->where('size',$item->size)->first();
                 $productQuantityItem=Product_size_color_quantity::where('product_id',$product_item->id)
                                             ->where('size_id',$size->id)
@@ -123,8 +155,15 @@ class OrderController extends BaseController
                 $productQuantityItem->quantity=($productQuantityItem->quantity)-($item->item_quantity);
                 $productQuantityItem->save();
                 $item->save();
+                array_push($productsOrdered,$item);
             }
-            return $this->SendResponse($order,'order created Successfully');
+            return $this->SendResponse([
+                                        'YourOrder'=>$order,
+                                        'TotalPriceOrder'=>$orderTotal,
+                                        'ProductsOrder'=>$productsOrdered,
+
+                                    ],
+                                        'order created Successfully');
             }
         }catch (\Throwable $th) {
             return $this->SendError('Error',$th->getMessage());
@@ -137,7 +176,7 @@ class OrderController extends BaseController
     {
         try {
             $user_id=Auth::user()->id;
-            $user=User::findOrFail($user_id);
+            $user=User::find($user_id);
             if($user->is_Admin==1){
                  $count=Order::count();
                  if($count!=0){
@@ -162,7 +201,7 @@ class OrderController extends BaseController
     public function getOpenedOrders(){
         try {
             $user_id=Auth::user()->id;
-        $user=User::findOrFail($user_id);
+        $user=User::find($user_id);
         if($user->is_Admin!=1){
             return $this->SendError('You do not have rights to access');
         }else{
@@ -180,7 +219,7 @@ class OrderController extends BaseController
     public function getClosedOrders(){
         try {
             $user_id=Auth::user()->id;
-            $user=User::findOrFail($user_id);
+            $user=User::find($user_id);
         if($user->is_Admin!=1){
             return $this->SendError('You do not have rights to access');
         }else{
@@ -204,11 +243,11 @@ class OrderController extends BaseController
             if ($validator->fails())
                 return $this->SendError('Please validate error' ,$validator->errors());
             $user_id=Auth::user()->id;
-            $user=User::findOrFail($user_id);
+            $user=User::find($user_id);
             if($user->is_Admin!=1){
                 return $this->SendError('You do not have rights to access');
             }
-            $order=Order::findOrFail($orderId);
+            $order=Order::find($orderId);
             if(is_null($order))
                 return $this->SendError('order not founded');
             $date_sent=Carbon::parse($request->date_sent)->format('Y-m-d');
