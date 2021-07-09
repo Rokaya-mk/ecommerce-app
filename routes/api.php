@@ -128,6 +128,7 @@ Route::delete('delete/review/{id}', 'API\ReviewController@deleteReview')->middle
 
 Route::post('sendEmail', 'API\SendEmailController@sendEmailForAllUsers')->middleware('auth:api');
 Route::post('send/Email/for/users', 'API\SendEmailController@sendEmailForSpecificUsers')->middleware('auth:api');
+Route::post('change/email/option/{id}', 'API\SendEmailController@changeAcceptEmailOption')->middleware('auth:api');
 
 //push notification Routes
 Route::middleware('auth:api')->group( function (){

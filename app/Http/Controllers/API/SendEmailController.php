@@ -73,4 +73,22 @@ class SendEmailController extends BaseController
             return $this->sendError('Something went wrong', $th->getMessage());
         }
     }
+
+    public function changeAcceptEmailOption(Request $request, $id){
+        try {
+            $userID = User::find($id);
+            $user = Auth::user();
+            if ($id == $user->id) {
+                if ($user->accept_email == 0) {
+                    $user->accept_email = 1;
+                    $user->save();
+                }else {
+                    $user->accept_email = 0;
+					$user->save();
+                }
+            }
+        } catch (\Throwable $th) {
+            return $this->sendError('Something went wrong', $th->getMessage());
+        }
+    }
 }
