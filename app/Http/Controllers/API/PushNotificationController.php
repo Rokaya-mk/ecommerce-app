@@ -22,6 +22,7 @@ class PushNotificationController extends BaseController
             $validator = Validator::make($request->all(),[
                 'token_fcm' =>'required'
             ]);
+            dd($request->token_fcm,$user);
             if($validator->fails()){
                 return $this->SendError('Validate Error',$validator->errors());
             }
