@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -14,6 +15,7 @@ class UserTableSeeder extends Seeder
      */
     public function run()
     {
+        $now = Carbon::now()->toDateTimeString();
         DB::table('users')->insert([
             'name' => 'Tessie Weber',
             'email' => 'norbert.schinner@example.com',
@@ -23,7 +25,9 @@ class UserTableSeeder extends Seeder
             'is_Admin'=>0,
             'is_verify'=>1,
             'shippingAddress'=> 'Morocco',
-            'accept_notification'=>1
+            'accept_notification'=>1,
+            'created_at' => $now,
+            'updated_at' => $now
 
 
         ]);
@@ -36,7 +40,9 @@ class UserTableSeeder extends Seeder
             'is_Admin'=>0,
             'is_verify'=>1,
             'shippingAddress'=> 'Morocco',
-            'accept_notification'=>1
+            'accept_notification'=>1,
+            'created_at' => $now,
+            'updated_at' => $now
         ]);
         DB::table('users')->insert([
             'name' => 'admin',
@@ -47,7 +53,9 @@ class UserTableSeeder extends Seeder
             'is_Admin'=>1,
             'is_verify'=>1,
             'shippingAddress'=> 'Morocco',
-            'accept_notification'=>0
+            'accept_notification'=>0,
+            'created_at' => $now,
+            'updated_at' => $now
         ]);
     }
 }
