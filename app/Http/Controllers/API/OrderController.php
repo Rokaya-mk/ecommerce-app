@@ -104,7 +104,7 @@ class OrderController extends BaseController
 
             if($request->has('coupon_code')){
                 //get coupon discount
-                $coupon = Coupon::where(DB::raw("BINARY `discount_code`"),$request->coupon_code)->first();
+                $coupon = Coupon::where(DB::raw('discount_code'),$request->coupon_code)->first();
                 //dd($coupon);
                 if($coupon->discount_type=='PERCENTAGE'){
                     $orderTotal = $orderTotal - (($coupon->discount_value / 100) * $orderTotal);
