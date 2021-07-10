@@ -239,7 +239,7 @@ class UserBagController extends BaseController
             }else{
                 $cartItem=User_bag::where('user_id',$user->id)
                                     ->where('product_id',$id)
-                                    ->where('is_final_bag','new');
+                                    ->where('is_final_bag','new')->first();
         if(is_null($cartItem))
             return $this->sendError('product not founded in your bag');
             $cartItem->delete();
