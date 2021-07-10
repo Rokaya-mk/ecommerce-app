@@ -141,7 +141,7 @@ class CouponController extends BaseController
         if ($validateData->fails())
                 return $this->SendError(' Invalid data' ,$validateData->errors());
 
-        $coupon = Coupon::where(DB::raw("BINARY 'discount_code'"),$request->coupon_code)->first();
+        $coupon = Coupon::where(DB::raw('discount_code'),$request->coupon_code)->first();
         if($coupon){
             $getDate=Carbon::now()->format('Y-m-d H:i:s');
             if($coupon->expired_date>=$getDate){
