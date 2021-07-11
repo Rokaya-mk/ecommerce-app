@@ -50,7 +50,7 @@ class UserTableSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => bcrypt('password'),
             'accept_email' =>0,
-            'is_Admin'=>1,
+            'is_Admin'=>0,
             'is_verify'=>1,
             'shippingAddress'=> 'Morocco',
             'accept_notification'=>0,
