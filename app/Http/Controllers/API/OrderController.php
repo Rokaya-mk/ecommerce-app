@@ -268,38 +268,38 @@ class OrderController extends BaseController
     }
 
     //show user orders list
-    public function myOrders(){
-        try {
-            $user=Auth::user();
-            if($user->is_Admin!=0){
-                return $this->sendError('You do not have rights to access ');
-            }else{
-                $orders=Order::where('user_id',$user->id)->orderBy('id','DESC')->get();
-                if($orders->isEmpty())
-                    return $this->sendError('your order list is empty!');
+    // public function myOrders(){
+    //     try {
+    //         $user=Auth::user();
+    //         if($user->is_Admin!=0){
+    //             return $this->sendError('You do not have rights to access ');
+    //         }else{
+    //             $orders=Order::where('user_id',$user->id)->orderBy('id','DESC')->get();
+    //             if($orders->isEmpty())
+    //                 return $this->sendError('your order list is empty!');
 
-                $deliverdOrders=Order::where('user_id',$user->id)
-                                      ->where('money_payement',1)
-                                      ->where('is_order_sent',1)
-                                      ->orderBy('id','DESC')->get();
+    //             $deliverdOrders=Order::where('user_id',$user->id)
+    //                                   ->where('money_payement',1)
+    //                                   ->where('is_order_sent',1)
+    //                                   ->orderBy('id','DESC')->get();
 
-                $onProcessingOrders=Order::where('user_id',$user->id)
-                                           ->orWhere('date_sent',null)
-                                           ->orWhere('date_target',null)
-                                           ->orWhere('is_order_sent',0)
-                                           ->orderBy('id','DESC')->get();
+    //             $onProcessingOrders=Order::where('user_id',$user->id)
+    //                                        ->orWhere('date_sent',null)
+    //                                        ->orWhere('date_target',null)
+    //                                        ->orWhere('is_order_sent',0)
+    //                                        ->orderBy('id','DESC')->get();
 
-                 return $this->SendResponse([
-                                            'allOrders'          =>$orders,
-                                            'delivredOrders'     =>$deliverdOrders,
-                                            'onProcessingOrders' =>$onProcessingOrders
-                                            ],
-                                            'Your Orders list retrieved successfully'
-                                        );
-            }
-        } catch (\Throwable $th) {
-            return $this->SendError('Error',$th->getMessage());
-        }
-    }
+    //              return $this->SendResponse([
+    //                                         'allOrders'          =>$orders,
+    //                                         'delivredOrders'     =>$deliverdOrders,
+    //                                         'onProcessingOrders' =>$onProcessingOrders
+    //                                         ],
+    //                                         'Your Orders list retrieved successfully'
+    //                                     );
+    //         }
+    //     } catch (\Throwable $th) {
+    //         return $this->SendError('Error',$th->getMessage());
+    //     }
+    // }
 
 }

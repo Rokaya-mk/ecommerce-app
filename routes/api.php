@@ -100,7 +100,7 @@ Route::middleware('auth:api')->group( function (){
     Route::get('getOpenedOrders','API\OrderController@getOpenedOrders');
     Route::get('getClosedOrders','API\OrderController@getClosedOrders');
     Route::post('confirmSend/{orderId}','API\OrderController@confirmSend');
-    Route::get('myOrders','API\OrderController@myOrders');
+    //Route::get('myOrders','API\OrderController@myOrders');
 
 });
 
@@ -152,3 +152,19 @@ Route::delete('delete-notification/{id}', 'API\PushNotificationController@delete
 Route::delete('clear-notifications', 'API\PushNotificationController@clearNotifications');
 
 });
+
+//statistics
+//Route::post('productsCount', 'API\StatisticsController@productsCount')->middleware('auth:api');
+Route::post('allProductsTypeCount', 'API\StatisticsController@allProductsTypeCount')->middleware('auth:api');
+Route::post('avaliableProductsTypeCount', 'API\StatisticsController@avaliableProductsTypeCount')->middleware('auth:api');
+Route::post('soldProductsCount', 'API\StatisticsController@soldProductsCount')->middleware('auth:api');
+Route::post('wallet', 'API\StatisticsController@wallet')->middleware('auth:api');
+Route::post('quantitybyProductName', 'API\StatisticsController@quantitybyProductName')->middleware('auth:api');
+Route::post('todaySoldProductsCount', 'API\StatisticsController@todaySoldProductsCount')->middleware('auth:api');
+Route::post('lastWeekSoldProductsCounts', 'API\StatisticsController@lastWeekSoldProductsCounts')->middleware('auth:api');
+Route::post('lastMonthSoldProductsCounts', 'API\StatisticsController@lastMonthSoldProductsCounts')->middleware('auth:api');
+Route::post('yearByMonthSoldProductsCounts', 'API\StatisticsController@yearByMonthSoldProductsCounts')->middleware('auth:api');
+
+// Route::post('LastWeekSoldProductsCount', 'API\StatisticsController@LastWeekSoldProductsCount')->middleware('auth:api');
+// Route::post('LastMonthSoldProductsCount', 'API\StatisticsController@LastMonthSoldProductsCount')->middleware('auth:api');
+
