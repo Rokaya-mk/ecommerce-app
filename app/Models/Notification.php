@@ -11,6 +11,6 @@ class Notification extends Model
     protected $fillable=['title', 'body' ,'image'];
 
     public function users(){
-        return $this->belongsToMany('App\Models\User')->withTimestamps();;
+        return $this->belongsToMany('App\Models\User')->withTimestamps();
     }
 }

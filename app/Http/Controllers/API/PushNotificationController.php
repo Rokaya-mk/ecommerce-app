@@ -144,8 +144,12 @@ class PushNotificationController extends BaseController
         $sucessResponse = json_decode($response);
         if($sucessResponse->success==1){
             //if notification sended sucessfully then keep users id with notifiation id
+                $listUsers=[];
+                foreach ($users as $item) {
+                    $listUsers[] = $item['id'];
+                }
+                $push_notification->users()->syncWithoutDetaching($listUsers);
 
-                $push_notification->users()->syncWithoutDetaching($users);
                 return response()->json(['response' =>$response ,'message' => 'notification successfully sended ']);
         }else{
             return response()->json(['data'=>$response]);
@@ -163,10 +167,15 @@ class PushNotificationController extends BaseController
     //display all notification for one user
     public function displayNotifications(Request $request){
         try {
-            $user_id = Auth::user()->id;
-        $notifications = Notification::whereHas('users', function ($q) use($user_id) {
-            $q->where('users.id', $user_id);
-        })->get();
+            $user = Auth::user();
+            //$userId=$user->id;
+
+            // $notifications = Notification::whereHas('users', function ($q) use($userId) {
+            //     $q->where('users.id', $userId);
+            // })->get();
+            $notifications=$user->notifications;
+
+        //$notifications=$user_id->notifications;
         if($notifications->isEmpty()){
             return $this->SendError('empty notifications list');
         }
