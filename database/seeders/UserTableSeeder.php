@@ -21,11 +21,11 @@ class UserTableSeeder extends Seeder
             'email' => 'norbert.schinner@example.com',
             'email_verified_at' => now(),
             'password' => bcrypt('password'),
-            'accept_email' =>1,
-            'is_Admin'=>0,
+            'accept_email' =>0,
+            'is_Admin'=>1,
             'is_verify'=>1,
             'shippingAddress'=> 'Morocco',
-            'accept_notification'=>1,
+            'accept_notification'=>0,
             'created_at' => $now,
             'updated_at' => $now
 
@@ -46,7 +46,7 @@ class UserTableSeeder extends Seeder
         ]);
         DB::table('users')->insert([
             'name' => 'admin',
-            'email' => 'mbkirroya20officiel@gmail.com',
+            'email' => 'ciel.emi@example.org',
             'email_verified_at' => now(),
             'password' => bcrypt('password'),
             'accept_email' =>0,
