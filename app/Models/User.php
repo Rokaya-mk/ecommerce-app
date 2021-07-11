@@ -24,6 +24,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'shippingAddress',
         'photo',
 	    'is_Admin',
+        'device_token'
     ];
 
     /**

@@ -18,7 +18,7 @@ class PushNotificationController extends BaseController
     public function saveToken (Request $request)
     {
         try {
-            $user = Auth::user();
+
             $validator = Validator::make($request->all(),[
                 'token_fcm' =>'required'
             ]);
@@ -26,16 +26,20 @@ class PushNotificationController extends BaseController
             if($validator->fails()){
                 return $this->SendError('Validate Error',$validator->errors());
             }
-            $user->device_token=$request->token_fcm;
-            $user->save();
-            // $user->update(['device_token'=>$request->token_fcm]);
-            $this->SendResponse($user, 'token saved successfully.!');
+            //$user = Auth::user();
+
+            auth()->user()->update(['device_token'=>$request->token_fcm]);
+            return $this->SendResponse(auth()->user(), 'token saved successfully.!');
         } catch (\Throwable $th) {
             return $this->SendError('Error',$th->getMessage());
         }
 
-
-    }
+     }
+    // public function saveToken(Request $request)
+    // {
+    //     auth()->user()->update(['device_token'=>$request->token_fcm]);
+    //     return response()->json(['token saved successfully.']);
+    // }
 
     public function sendPushNotification(Request $request)
     {
