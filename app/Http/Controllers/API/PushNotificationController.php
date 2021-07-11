@@ -45,7 +45,7 @@ class PushNotificationController extends BaseController
     {
         try {
             $user=User::find(Auth::id());
-            if($user->is_Admin !=0)
+            if($user->is_Admin !=1)
                 return $this->sendError('You do not have rights to access ');
             //validate data
         $validator=Validator::make($request->all(),[
