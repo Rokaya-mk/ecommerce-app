@@ -146,8 +146,9 @@ class PushNotificationController extends BaseController
             //if notification sended sucessfully then keep users id with notifiation id
 
                 $push_notification->users()->syncWithoutDetaching($users);
-                $this->SendResponse(['response' =>$response], 'notification successfully sended ');
-
+                return response()->json(['response' =>$response ,'message' => 'notification successfully sended ']);
+        }else{
+            return response()->json(['data'=>$response]);
         }
         } catch (\Throwable $th) {
             return $this->SendError('Error',$th->getMessage());
