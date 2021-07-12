@@ -40,9 +40,10 @@ class ProductController extends BaseController
                     ->whereNull('products.deleted_at')
                     ->where('favoraite_products.user_id', Auth::id());
                 })
-                ->select(DB::raw('products.*, "1" AS inFavoriate') )
+                ->select(DB::raw('products.*'))
                 ->get();
-
+                foreach($favoraiteproducts as $item)
+                    $item->inFavoriate = "1" ;
 
                 $notFavoraiteproducts=DB::table('products')
                 ->whereNotIn('id', function($query){
@@ -50,9 +51,11 @@ class ProductController extends BaseController
                     ->from('favoraite_products')
                     ->where('favoraite_products.user_id', Auth::id());
                 })
-                ->select(DB::raw('products.*, "0" AS inFavoriate'))
+                ->select(DB::raw('products.*'))
                 ->whereNull('products.deleted_at')
                 ->get();
+                foreach($notFavoraiteproducts as $item)
+                    $item->inFavoriate = "0" ;
                 $allProducts =$favoraiteproducts->merge($notFavoraiteproducts)->sortBy('id');
                 return $this->SendResponse($allProducts,'Products is retrieved Successfully!');
             }
