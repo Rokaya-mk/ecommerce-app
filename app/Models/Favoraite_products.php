@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Favoraite_products extends Model
 {
     use HasFactory;
+    protected $primaryKey = null;
+
+    public $incrementing = false;
+
     protected $fillable = [
         'user_id',
         'product_id'
