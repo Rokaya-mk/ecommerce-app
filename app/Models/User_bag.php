@@ -11,7 +11,7 @@ class User_bag extends Model
 
     protected $fillable=[
         'user_id',
-        'product_id'=>'integer',
+        'product_id',
         'order_id',
         'item_quantity',
         'color',
