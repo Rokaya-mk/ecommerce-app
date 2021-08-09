@@ -51,7 +51,8 @@ class OfferController extends BaseController
             $date=Carbon::now();
             $offer=new Offer();
             $offer->product_id=$product->id;
-            $offer->offer_product_price=(double)($request->offer_product_price);
+            $product_price_offer=$request->offer_product_price;
+            $offer->offer_product_price=(double)$product_price_offer;
             $offer->offer_start_date= Carbon::parse($request->offer_start_date)->format('Y-m-d H:i:s');
             $offer->offer_expired_date= Carbon::parse($request->offer_expired_date)->format('Y-m-d H:i:s');
             if($offer->offer_start_date < $date)
