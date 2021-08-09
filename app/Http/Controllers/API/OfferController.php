@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class OfferController extends BaseController
 {
@@ -18,11 +17,10 @@ class OfferController extends BaseController
     public function offers(){
         try
         {
-            $offers=DB::select('select * from offers ');
-            if(count($offers) <= 0)
+            $offers=Offer::all();
+            if($offers->count()==0)
                 return $this->SendError('There is no Offer');
-            //$offer=$offers->last();
-            return $this->SendResponse([$offers], 'Offers are retrieved Successfully!');
+            return $this->SendResponse($offers, 'Offers are retrieved Successfully!');
         } catch (\Throwable $th) {
             return $this->SendError('Error',$th->getMessage());
         }
@@ -63,7 +61,7 @@ class OfferController extends BaseController
             if($offer->offer_expired_date < $offer->offer_start_date)
                 return $this->SendError('experired date can not be less then started date of offer');
             $offer->save();
-            return $this->SendResponse($offer,gettype($offer->offer_product_price),'offer created Successfully !');
+            return $this->SendResponse($offer,'offer created Successfully !');
         }
         } catch (\Throwable $th) {
             return $this->SendError('Error',$th->getMessage());
