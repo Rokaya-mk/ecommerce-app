@@ -106,7 +106,7 @@ Route::middleware('auth:api')->group( function (){
 
 //Offer Routes
 Route::get('offers','API\OfferController@offers');
-Route::post('addNewOffer/{productId}','API\OfferController@addNewOffer')->middleware('auth:api');
+Route::post('addNewOffer','API\OfferController@addNewOffer')->middleware('auth:api');
 Route::put('updateOffer/{idOffer}','API\OfferController@updateOffer')->middleware('auth:api');
 Route::delete('destroyOffer/{idOffer}','API\OfferController@destroyOffer')->middleware('auth:api');
 Route::get('productsOffers','API\OfferController@productsOffers');

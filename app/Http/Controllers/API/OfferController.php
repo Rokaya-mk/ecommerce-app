@@ -20,17 +20,19 @@ class OfferController extends BaseController
             $offers=Offer::all();
             if($offers->count()==0)
                 return $this->SendError('There is no Offer');
-            return $this->SendResponse($offers, 'Offers are retrieved Successfully!');
+            $offer=$offers->first();
+            return $this->SendResponse([$offer,gettype($offer->offer_product_price)], 'Offers are retrieved Successfully!');
         } catch (\Throwable $th) {
             return $this->SendError('Error',$th->getMessage());
         }
     }
 
     //add new offer
-    public function addNewOffer(Request $request,$productId){
+    public function addNewOffer(Request $request){
         try {
             //validate data
         $validateData=Validator::make($request->all(), [
+            'product_id' =>'required|unique:offers,product_id',
             'offer_product_price'=>'required',
             'offer_start_date'=>'required|date',
             'offer_expired_date'=>'required|date',
@@ -43,7 +45,7 @@ class OfferController extends BaseController
             return $this->SendError('You do not have rights to add coupon');
         }else{
             //find product
-            $product=Product::find($productId);
+            $product=Product::find($request->product_id);
             if(is_null($product)){
                 return $this->SendError('this product not founded');
             }
