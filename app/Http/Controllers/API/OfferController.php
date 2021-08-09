@@ -20,7 +20,7 @@ class OfferController extends BaseController
             $offers=Offer::all();
             if($offers->count()==0)
                 return $this->SendError('There is no Offer');
-            $offer=$offers->first();
+            $offer=$offers->last();
             return $this->SendResponse([$offer,gettype($offer->offer_product_price)], 'Offers are retrieved Successfully!');
         } catch (\Throwable $th) {
             return $this->SendError('Error',$th->getMessage());
