@@ -33,7 +33,7 @@ class OfferController extends BaseController
             //validate data
         $validateData=Validator::make($request->all(), [
             'product_id' =>'required|unique:offers,product_id',
-            'offer_product_price'=>'required',
+            'offer_product_price'=>'required|numeric',
             'offer_start_date'=>'required|date',
             'offer_expired_date'=>'required|date',
 
@@ -54,7 +54,7 @@ class OfferController extends BaseController
             $offer=new Offer();
             $offer->product_id=$product->id;
             $product_price_offer=$request->offer_product_price;
-            $offer->offer_product_price=(double)$product_price_offer;
+            $offer->offer_product_price=(double)($product_price_offer);
             $offer->offer_start_date= Carbon::parse($request->offer_start_date)->format('Y-m-d H:i:s');
             $offer->offer_expired_date= Carbon::parse($request->offer_expired_date)->format('Y-m-d H:i:s');
             if($offer->offer_start_date < $date)
@@ -62,7 +62,7 @@ class OfferController extends BaseController
             if($offer->offer_expired_date < $offer->offer_start_date)
                 return $this->SendError('experired date can not be less then started date of offer');
             $offer->save();
-            return $this->SendResponse($offer,'offer created Successfully !');
+            return $this->SendResponse($offer,gettype($offer->offer_product_price),'offer created Successfully !');
         }
         } catch (\Throwable $th) {
             return $this->SendError('Error',$th->getMessage());
