@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OfferController extends BaseController
 {
@@ -17,11 +18,11 @@ class OfferController extends BaseController
     public function offers(){
         try
         {
-            $offers=Offer::all();
-            if($offers->count()==0)
+            $offers=DB::select('select * from offers ');
+            if(count($offers) <= 0)
                 return $this->SendError('There is no Offer');
-            $offer=$offers->last();
-            return $this->SendResponse([$offer,gettype($offer->offer_product_price)], 'Offers are retrieved Successfully!');
+            //$offer=$offers->last();
+            return $this->SendResponse([$offers], 'Offers are retrieved Successfully!');
         } catch (\Throwable $th) {
             return $this->SendError('Error',$th->getMessage());
         }
