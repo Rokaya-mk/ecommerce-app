@@ -27,11 +27,11 @@ class OfferController extends BaseController
     }
 
     //add new offer
-    public function addNewOffer(Request $request){
+    public function addNewOffer(Request $request,$productId){
         try {
             //validate data
         $validateData=Validator::make($request->all(), [
-            'product_id' =>'required|unique:offers,product_id',
+           // 'product_id' =>'required|unique:offers,product_id',
             'offer_product_price'=>'required|numeric',
             'offer_start_date'=>'required|date',
             'offer_expired_date'=>'required|date',
@@ -44,9 +44,15 @@ class OfferController extends BaseController
             return $this->SendError('You do not have rights to add coupon');
         }else{
             //find product
-            $product=Product::find($request->product_id);
+            $product=Product::find($request->productId);
             if(is_null($product)){
                 return $this->SendError('this product not founded');
+            }
+            //verify if product exist already in offers table
+            $offer=Offer::where('product_id',$request->productId)->get();
+            //return  $this->SendError($offer);
+            if(!$offer->isEmpty()){
+                return $this->SendError('this product has already an offer');
             }
             // time now
             $date=Carbon::now();
