@@ -73,6 +73,7 @@ Route::post('deleteCategory', 'API\CategoryController@deleteCategory')->middlewa
 Route::post('showAllProductCategories/{id}', 'API\ProductCategoryController@showAllProductCategories');
 Route::post('addCategorytoProduct', 'API\ProductCategoryController@addCategorytoProduct')->middleware('auth:api');
 Route::post('removeProductfromCategory', 'API\ProductCategoryController@removeProductfromCategory')->middleware('auth:api');
+Route::post('showAllProductsInCategory/{id}', 'API\ProductCategoryController@showAllProductsInCategory');
 
 //Coupons Routes
 Route::get('displayCoupons','API\CouponController@displayCoupons')->middleware('auth:api');
