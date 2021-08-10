@@ -111,4 +111,24 @@ class ProductCategoryController extends BaseController
             return $this->SendError('Error',$th->getMessage());
         }
     }
+
+    public function showAllProductsInCategory($id)
+    {
+        try
+        {
+            $category=Category::find($id);
+            if(is_null($category))
+                return $this->SendError('category is not found');
+            $categoryProducts=DB::table('product_categories')
+            ->join('products','products.id','=','product_categories.product_id')
+            ->where('product_categories.category_id', $id)
+            ->select('products.id', 'name_en', 'name_ar', 'description_en', 'description_ar', 'price')
+            ->get();
+            if($categoryProducts->count()==0)
+                return $this->SendError('This category dose not have product');
+            return $this->SendResponse($categoryProducts, 'catogary products are retrieved Successfully!');
+        } catch (\Throwable $th) {
+            return $this->SendError('Error',$th->getMessage());
+        }
+    }
 }
