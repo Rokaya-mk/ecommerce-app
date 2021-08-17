@@ -119,12 +119,13 @@ class OrderController extends BaseController
             $order->save();
             // if($request->has('payment_method')){
 
-            //     $payment=new Payment();
-            //     $payment->user_id=$user->id;
-            //     $payment->order_id=$order->id;
-            //     $payment->payment_method=$request->payment_method;
-            //     $payment->amount_paid=$orderTotal;
-            //     $payment->save();
+                $payment=new Payment();
+                $payment->user_id=$user->id;
+                $payment->order_id=$order->id;
+                //$payment->payment_method=$request->payment_method;
+                $payment->payment_method='null';
+                $payment->amount_paid=$orderTotal;
+                $payment->save();
             // }
             // else{
             //     return $this->SendError('you must specify payment method');
@@ -182,8 +183,7 @@ class OrderController extends BaseController
                  if($count!=0){
                      $orders=Order::orderBy('id', 'DESC')->get();
                      return $this->SendResponse([
-                                                 'orders'=>      $orders,
-                                                 'countOrders'=> $count],
+                                                 'orders'=>      $orders ],
                                                  'Orders list retrieved successfully');
                  }else{
                      return $this->SendError('you don\'t have any order');
@@ -301,5 +301,40 @@ class OrderController extends BaseController
     //         return $this->SendError('Error',$th->getMessage());
     //     }
     // }
+public function getOrderById(Request $request,$orderId){
+    try {
+        $user_id=Auth::user()->id;
+            $user=User::find($user_id);
+        if($user->is_Admin!=1){
+            return $this->SendError('You do not have rights to access');
+         }else{
+            $order= Order::find($orderId);
+            if(is_null($order))
+                return $this->SendError('order not found');
+            //get user of order
+            $customer = User::where('id',$order->user_id)->get();
+            if($customer->isEmpty())
+                return $this->sendError('customer of this order not found!');
+            //get totle amount
+            $paymentObject= Payment::where('order_id',$order->id)->first();
+            //dd($paymentObject);
+            if(is_null($paymentObject))
+                return $this->sendError('payment item of this order not founded!');
+            //get items of order
+            $productsOrder=User_bag::where('order_id',$order->id)->get();
+            if($productsOrder->isEmpty())
+                return $this->sendError('can not get products of this item ');
+                return $this->sendResponse([
+                    'customer' =>$customer,
+                    'order' =>$order,
+                    'totalAmount' => $paymentObject->amount_paid,
+                    'productsOrder' =>$productsOrder,
+                    'numberOfItems' => $productsOrder->count(),
+                ],'Order retrieved Successfully');
+        }
+    } catch (\Throwable $th) {
+        return $this->SendError('Error',$th->getMessage());
+    }
+}
 
 }
