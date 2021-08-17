@@ -102,6 +102,9 @@ Route::middleware('auth:api')->group( function (){
     Route::get('getClosedOrders','API\OrderController@getClosedOrders');
     Route::post('confirmSend/{orderId}','API\OrderController@confirmSend');
     //Route::get('myOrders','API\OrderController@myOrders');
+    //get order information and products by id order
+    Route::get('getOrderById/{orderId}','API\OrderController@getOrderById');
+
 
 });
 
