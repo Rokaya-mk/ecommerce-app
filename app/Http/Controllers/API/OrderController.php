@@ -117,19 +117,19 @@ class OrderController extends BaseController
             }
 
             $order->save();
-            // if($request->has('payment_method')){
+             if($request->has('payment_method')){
 
                 $payment=new Payment();
                 $payment->user_id=$user->id;
                 $payment->order_id=$order->id;
-                //$payment->payment_method=$request->payment_method;
-                $payment->payment_method='null';
+                $payment->payment_method=$request->payment_method;
+                //$payment->payment_method='null';
                 $payment->amount_paid=$orderTotal;
                 $payment->save();
-            // }
-            // else{
-            //     return $this->SendError('you must specify payment method');
-            // }
+            }
+            else{
+                return $this->SendError('you must specify payment method');
+            }
             //update quantity for products
             $productsOrdered=[];
             foreach($products_bag as $item){
